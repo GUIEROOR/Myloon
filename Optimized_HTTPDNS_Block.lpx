@@ -1,0 +1,230 @@
+#!name=HTTPDNS 拦截器优化版（合并/去重）
+#!desc=合并 Fries_HTTPDNS_Block 与 Kelee_Block_HTTPDNS；拦截常见 HTTPDNS/HTTPSDNS，确保请求回到 Loon DNS 框架；已移除指定电商平台相关拦截。
+#!author=VirgilClyne, 可莉, optimized by ChatGPT
+#!homepage=https://nsloon.app/docs/Plugin/
+#!icon=https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/HTTPDNS.png
+#!tag=HTTPDNS, DNS, 去广告, 依赖
+#!system=
+#!system_version=
+#!loon_version=3.2.4(787)
+#!date=2026-05-16
+
+# 说明：
+# 1. 已合并两个来源并按 Loon 官方插件结构整理。
+# 2. 已移除指定电商平台 HTTPDNS URL Rewrite 拦截段。
+# 3. 已去重并统一规则逗号空格格式；保留 no-resolve 以避免无意义 DNS 查询。
+
+[General]
+force-http-engine-hosts = 119.29.29.29:80, dns.weixin.qq.com:80, dns.weixin.qq.com:8080, dns.weixin.qq.com:443, 203.107.1.65:80, 203.107.1.66:80
+
+[Rule]
+# Generic HTTPDNS / HTTPSDNS
+DOMAIN-KEYWORD,httpdns,REJECT
+DOMAIN-KEYWORD,httpsdns,REJECT
+USER-AGENT,"httpdns*",REJECT
+USER-AGENT,"httpsdns*",REJECT
+DOMAIN,aedns.weixin.qq.com,REJECT
+DOMAIN,amdc.alipay.com,REJECT
+DOMAIN,apidns-js.kwd.inkuai.com,REJECT
+DOMAIN,apidns.kwd.inkuai.com,REJECT
+DOMAIN,dns.iqiyi.com,REJECT
+DOMAIN,dns.jd.com,REJECT
+DOMAIN,dns.qiyipic.iqiyi.com,REJECT
+DOMAIN,dns.weibo.cn,REJECT
+DOMAIN,dns.weixin.qq.com,REJECT
+DOMAIN,dns.weixin.qq.com.cn,REJECT
+DOMAIN,dns2.q2cdn.com,REJECT
+DOMAIN,dnspod.meituan.httpdns.qcloud.com,REJECT
+DOMAIN,dnspod.meituan.httpdns.start.qcloud.com,REJECT
+DOMAIN,doh.iqiyi.com,REJECT
+DOMAIN,doh.ptqy.gitv.tv,REJECT
+DOMAIN,dotserver.douyucdn.cn,REJECT
+DOMAIN,hd.xiaojukeji.com,REJECT
+DOMAIN,hdns.ksyun.com,REJECT
+DOMAIN,httpdns-api.aliyuncs.com,REJECT
+DOMAIN,httpdns-browser.platform.dbankcloud.cn,REJECT
+DOMAIN,httpdns-sc.aliyuncs.com,REJECT
+DOMAIN,httpdns-sdk.n.netease.com,REJECT
+DOMAIN,httpdns-v6.gslb.yy.com,REJECT
+DOMAIN,httpdns.alicdn.com,REJECT
+DOMAIN,httpdns.baidu.com,REJECT
+DOMAIN,httpdns.baidubce.com,REJECT
+DOMAIN,httpdns.bcelive.com,REJECT
+DOMAIN,httpdns.bilivideo.com,REJECT
+DOMAIN,httpdns.browser.miui.com,REJECT
+DOMAIN,httpdns.c.cdnhwc2.com,REJECT
+DOMAIN,httpdns.calorietech.com,REJECT
+DOMAIN,httpdns.cctv.com,REJECT
+DOMAIN,httpdns.danuoyi.tbcache.com,REJECT
+DOMAIN,httpdns.huaweicloud.com,REJECT
+DOMAIN,httpdns.immomo.com,REJECT
+DOMAIN,httpdns.kg.qq.com,REJECT
+DOMAIN,httpdns.kwd.inkuai.com,REJECT
+DOMAIN,httpdns.meituan.com,REJECT
+DOMAIN,httpdns.music.163.com,REJECT
+DOMAIN,httpdns.n.netease.com,REJECT
+DOMAIN,httpdns.n.shifen.com,REJECT
+DOMAIN,httpdns.ocloud.heytapmobi.com,REJECT
+DOMAIN,httpdns.ocloud.oppomobile.com,REJECT
+DOMAIN,httpdns.platform.dbankcloud.cn,REJECT
+DOMAIN,httpdns.platform.dbankcloud.com,REJECT
+DOMAIN,httpdns.push.heytapmobi.com,REJECT
+DOMAIN,httpdns.push.oppomobile.com,REJECT
+DOMAIN,httpdns.volcengineapi.com,REJECT
+DOMAIN,httpdns.yunxindns.com,REJECT
+DOMAIN,httpdns.yunxinfw.com,REJECT
+DOMAIN,httpdns.zybang.com,REJECT
+DOMAIN,httpdns1.cc.cdnhwc5.com,REJECT
+DOMAIN,httpdnsmultiapi.meituan.com,REJECT
+DOMAIN,httpdnsmultiapivip.meituan.com,REJECT
+DOMAIN,httpsdns.baidu.com,REJECT
+DOMAIN,kuaishou.httpdns.pro,REJECT
+DOMAIN,lofter.httpdns.c.163.com,REJECT
+DOMAIN,music.httpdns.c.163.com,REJECT
+DOMAIN,resolver.msg.xiaomi.net,REJECT
+DOMAIN,resolvers-cn.httpdns.aliyuncs.com,REJECT
+DOMAIN,serveraddr.service.kugou.com,REJECT
+DOMAIN,tp2p.kg.qq.com,REJECT
+DOMAIN,twns.p2ptun.qq.com,REJECT
+DOMAIN,ucdc.upaas.quark.cn,REJECT
+DOMAIN,union-httpdns.gslb.yy.com,REJECT
+DOMAIN,yuyin-httpdns.gslb.yy.com,REJECT
+DOMAIN,yyapp-httpdns.gslb.yy.com,REJECT
+DOMAIN-SUFFIX,httpdns.pro,REJECT
+IP-CIDR,101.124.19.122/32,REJECT,no-resolve
+IP-CIDR,101.32.104.104/32,REJECT,no-resolve
+IP-CIDR,103.224.222.208/32,REJECT,no-resolve
+IP-CIDR,106.39.206.21/32,REJECT,no-resolve
+IP-CIDR,106.39.206.25/32,REJECT,no-resolve
+IP-CIDR,106.39.206.70/32,REJECT,no-resolve
+IP-CIDR,111.206.147.156/32,REJECT,no-resolve
+IP-CIDR,111.206.147.210/32,REJECT,no-resolve
+IP-CIDR,111.206.148.27/32,REJECT,no-resolve
+IP-CIDR,111.31.201.194/32,REJECT,no-resolve
+IP-CIDR,111.31.241.140/32,REJECT,no-resolve
+IP-CIDR,111.31.241.76/32,REJECT,no-resolve
+IP-CIDR,115.236.121.195/32,REJECT,no-resolve
+IP-CIDR,115.236.121.51/32,REJECT,no-resolve
+IP-CIDR,116.128.177.249/32,REJECT,no-resolve
+IP-CIDR,116.130.224.150/32,REJECT,no-resolve
+IP-CIDR,116.130.224.205/32,REJECT,no-resolve
+IP-CIDR,117.185.247.73/32,REJECT,no-resolve
+IP-CIDR,118.89.204.198/23,REJECT,no-resolve
+IP-CIDR,118.89.204.198/32,REJECT,no-resolve
+IP-CIDR,119.29.29.98/32,REJECT,no-resolve
+IP-CIDR,119.29.29.99/32,REJECT,no-resolve
+IP-CIDR,123.151.48.171/32,REJECT,no-resolve
+IP-CIDR,123.151.48.193/32,REJECT,no-resolve
+IP-CIDR,123.151.48.208/32,REJECT,no-resolve
+IP-CIDR,123.151.54.50/32,REJECT,no-resolve
+IP-CIDR,180.153.202.85/32,REJECT,no-resolve
+IP-CIDR,180.76.76.112/32,REJECT,no-resolve
+IP-CIDR,180.76.76.200/32,REJECT,no-resolve
+IP-CIDR,180.76.76.220/32,REJECT,no-resolve
+IP-CIDR,182.254.116.117/32,REJECT,no-resolve
+IP-CIDR,182.254.118.119/32,REJECT,no-resolve
+IP-CIDR,183.192.196.31/32,REJECT,no-resolve
+IP-CIDR,202.90.108.13/32,REJECT,no-resolve
+IP-CIDR,202.90.110.46/32,REJECT,no-resolve
+IP-CIDR,203.107.1.0/24,REJECT,no-resolve
+IP-CIDR,203.205.129.102/32,REJECT,no-resolve
+IP-CIDR,203.205.234.132/32,REJECT,no-resolve
+IP-CIDR,220.196.159.73/32,REJECT,no-resolve
+IP-CIDR,39.156.140.245/32,REJECT,no-resolve
+IP-CIDR,39.156.140.30/32,REJECT,no-resolve
+IP-CIDR,39.156.140.47/32,REJECT,no-resolve
+IP-CIDR,39.97.128.148/32,REJECT,no-resolve
+IP-CIDR,39.97.130.51/32,REJECT,no-resolve
+IP-CIDR,42.187.182.106/32,REJECT,no-resolve
+IP-CIDR,42.187.182.123/32,REJECT,no-resolve
+IP-CIDR,42.187.184.154/32,REJECT,no-resolve
+IP-CIDR,42.81.232.18/32,REJECT,no-resolve
+IP-CIDR,43.130.30.237/32,REJECT,no-resolve
+IP-CIDR,43.130.30.240/32,REJECT,no-resolve
+IP-CIDR,43.137.153.151/32,REJECT,no-resolve
+IP-CIDR,43.137.159.31/32,REJECT,no-resolve
+IP-CIDR,43.152.112.101/32,REJECT,no-resolve
+IP-CIDR,43.153.248.120/32,REJECT,no-resolve
+IP-CIDR,59.111.239.61/32,REJECT,no-resolve
+IP-CIDR,59.111.239.62/32,REJECT,no-resolve
+IP-CIDR,60.28.172.100/32,REJECT,no-resolve
+IP-CIDR,61.151.231.157/32,REJECT,no-resolve
+IP-CIDR,81.71.61.216/32,REJECT,no-resolve
+IP-CIDR6,2402:4e00:1200:ed00:0:9089:6dac:96b6/128,REJECT,no-resolve
+IP-CIDR6,2402:4e00:1900:1700:0:9554:1ad9:c3a/128,REJECT,no-resolve
+IP-CIDR6,2402:4e00:8030:1::17/128,REJECT,no-resolve
+IP-CIDR6,2402:db40:5100:1011::5/128,REJECT,no-resolve
+IP-CIDR6,2408:8711:10:10::20/128,REJECT,no-resolve
+IP-CIDR6,2409:8702:4860:10::4d/128,REJECT,no-resolve
+IP-CIDR6,240e:928:1400:10::25/128,REJECT,no-resolve
+URL-REGEX,"^http:\/\/((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?:\/v?[0-9]+)?\/(?:sign_)?(?:(?:d|ss)[46]?|resolve)\?",REJECT
+URL-REGEX,"^http:\/\/((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):\d+\/httpdns\/",REJECT
+URL-REGEX,"^http:\/\/103\.37\.155\.60\/fetch",REJECT
+URL-REGEX,"^http:\/\/103\.41\.167\.237\/v2\/resolv",REJECT
+URL-REGEX,"^http:\/\/103\.44\.58\.64\/md\?",REJECT
+URL-REGEX,"^http:\/\/\[[0-9a-fA-F:]+\](?:\/v?[0-9]+)?\/(?:sign_)?(?:(?:d|ss)[46]?|resolve)\?",REJECT
+URL-REGEX,"^http:\/\/\[[0-9a-fA-F:]+\]:\d+\/httpdns\/",REJECT
+URL-REGEX,"^http:\/\/api\.weibo\.cn\/\d+\/httpdns\/config",REJECT
+URL-REGEX,"^http:\/\/api\.weibo\.cn\/httpdns\/config",REJECT
+URL-REGEX,"^http:\/\/cdn\.wup\.huya\.com\/launch\/queryHttpDns",REJECT
+URL-REGEX,"^http:\/\/xmc\.ximalaya\.com\/xmlymain-login-web\/login\/",REJECT
+
+[Rewrite]
+# HTTPDNS endpoints and response shortcuts
+^https?:\/\/appconf\.mail\.163\.com\/mailmaster\/api\/http\/urlConfig\.do$ reject-dict
+^https?:\/\/cdn\.wup\.huya\.com\/monitor\/monitor\.jsp reject
+^https:\/\/msglb\.91160\.com\/msg\/outer\/broker\/get$ reject-dict
+^https:\/\/gslbali\.ximalaya\.com\/linkeye-cloud\/httpdns\/ reject
+^https:\/\/ucdc\d?-upaas\.uc\.cn\/api\/v\d\/dns_query\? reject-dict
+^https?:\/\/110\.76\.8\.150\/squery reject
+^https?:\/\/203\.209\.230\.39\/squery reject
+^https?:\/\/203\.209\.245\.102\/squery reject
+^https?:\/\/203\.209\.245\.158\/squery reject
+^https?:\/\/203\.209\.247\.95\/squery reject
+^https?:\/\/203\.209\.250\.41\/squery reject
+^https?:\/\/203\.209\.250\.114\/squery reject
+^https?:\/\/203\.209\.251\.147\/squery reject
+^https?:\/\/2400:B180:6001::18F\/squery reject
+^https?:\/\/2400:B200:1005:3000::155\/squery reject
+^https?:\/\/2400:B200:1005:3000::1D3\/squery reject
+^https?:\/\/2400:B200:5000:B000::C8\/squery reject
+^http:\/\/180\.76\.76\.112\/v4\/resolve reject
+^http:\/\/180\.76\.76\.220\/v4\/resolve reject
+^http:\/\/47\.101\.175\.206\/resolve reject
+^http:\/\/47\.100\.123\.169\/resolve reject
+^http:\/\/120\.46\.169\.234\/resolve reject
+^http:\/\/121\.36\.72\.124\/resolve reject
+^http:\/\/116\.63\.10\.135\/resolve reject
+^http:\/\/122\.9\.7\.134\/resolve reject
+^http:\/\/117\.185\.228\.108\/resolve reject
+^http:\/\/117\.144\.238\.29\/resolve reject
+^http:\/\/122\.9\.13\.79\/resolve reject
+^http:\/\/122\.9\.15\.129\/resolve reject
+^http:\/\/101\.91\.140\.224\/resolve reject
+^http:\/\/101\.91\.140\.124\/resolve reject
+^http:\/\/114\.116\.215\.110\/resolve reject
+^http:\/\/116\.63\.10\.31\/resolve reject
+^http:\/\/112\.64\.218\.119\/resolve reject
+^http:\/\/112\.65\.200\.117\/resolve reject
+^https?:\/\/.+\.zijieapi\.com\/get_domains\/ reject
+^https:\/\/dns\.jd\.com\/v6\/b reject
+^http:\/\/103\.37\.155\.60\/fetch reject
+^https?:\/\/119\.29\.29\.29\/d reject
+^http:\/\/182\.256\.116\.116\/d reject
+^http:\/\/api\.weibo\.cn\/2\/httpdns\/config reject
+^http:\/\/api\.weibo\.cn\/httpdns\/config reject
+^https?:\/\/dns\.weixin\.qq\.com\/cgi-bin\/micromsg-bin\/newgetdns reject
+^https?:\/\/dns\.weixin\.qq\.com\.cn\/cgi-bin\/micromsg-bin\/newgetdns reject
+^https?:\/\/short\.weixin\.qq\.com\/cgi-bin\/micromsg-bin\/getcdndns reject
+^https?:\/\/hkextshort\.weixin\.qq\.com\/cgi-bin\/micromsg-bin\/getcdndns reject
+^http:\/\/182\.254\.116\.117\/d reject
+^http:\/\/182\.254\.118\.119\/d reject
+^http:\/\/103\.41\.167\.237\/v2\/resolv reject
+
+[Map Local]
+# Safe empty JSON responses for selected HTTPDNS APIs
+^https?:\/\/amdc\.alipay\.com\/s?query data-type=text data='{}' status-code=200 header="Content-Type:text/json"
+^https?:\/\/amdc-sibling\.alipay\.com\.cn\/s?query data-type=text data='{}' status-code=200 header="Content-Type:text/json"
+
+[MITM]
+hostname = 119.29.29.98, 119.29.29.99, amdc.alipay.com, amdc-sibling.alipay.com.cn, dns.jd.com, *.httpdns.pro, appconf.mail.163.com, msglb.91160.com, ucdc2-upaas.uc.cn
