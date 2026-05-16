@@ -1,0 +1,71 @@
+#!name=WebPage
+#!desc=移除网页广告。
+#!author=RuCu6[https://github.com/RuCu6]
+#!icon=https://rucu6.pages.dev/Icons/app/webpage.png
+#!date=2026-05-07 19:05
+#!loon_version=3.2.7(832)
+
+[Rule]
+DOMAIN-SUFFIX, mypikpak.com, PROXY
+DOMAIN, 18hlw.com, PROXY
+DOMAIN, 8olbt.imsatcmn.cc, PROXY
+
+[Rewrite]
+# 解决 GitHub 速率限制返回429问题
+#^https:\/\/(?:avatars|gist|raw)\.githubusercontent\.com\/ header-replace Accept-Language en-us
+#^https:\/\/github\.com\/ header-replace Accept-Language en-us
+
+# 桌面端请使用 https://google.com/ncr
+# 谷歌服务重定向 //*.google.cn
+^https?:\/\/(www\.)?(?:g|google)\.cn 302 https://www.google.com
+^https?:\/\/translate\.google\.cn 302 https://translate.google.com
+
+# Avple 跳转弹窗 //asserts.avple.tv
+^https:\/\/asserts\.avple\.tv\/file\/avple-images\/ad\.js reject
+
+# 可莉仓库解除 UA 限制 //kelee.one
+https:\/\/(rule\.)?kelee\.one\/ header-replace user-agent Loon/786\x20CFNetwork/1568.200.51\x20Darwin/24.1.0
+https:\/\/(rule\.)?kelee\.one\/ response-header-add content-disposition inline
+https:\/\/(rule\.)?kelee\.one\/ response-header-replace content-type text/plain;\x20charset=utf-8
+
+# 恩秀仓库解除 UA 限制 //https://loon.103516.xyz
+^https?:\/\/loon\.103516\.xyz header-replace User-Agent Loon/936\x20CFNetwork/3826.600.41.2.1\x20Darwin/24.6.0
+
+
+# E-Hentai (https://e-hentai.org) //e-hentai.org, exhentai.org
+^https:\/\/exhentai\.org 307 https://e-hentai.org
+
+# PornHub (https://cn.pornhub.com/) //*.pornhub.com
+^https:\/\/(?:cn|www)\.pornhub\.com\/(?:interstitial|_xa\/ads) reject-200
+
+[Script]
+# ======= 普通网页 ======= #
+# 百度 //boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com
+http-request ^https:\/\/boxer\.baidu\.com\/scheme\?scheme script-path=https://rucu6.pages.dev/Scripts/baidu/baiduNoRedirect.js, tag=baidu_boxer
+http-response ^https:\/\/(?:www|m)\.baidu\.com(\/|\/\?(tn=&)?from=\d+\w)?$ script-path=https://rucu6.pages.dev/Scripts/webpage/baidu-index.js, requires-body=true, tag=baidu_home
+http-response ^https:\/\/zhidao\.baidu\.com\/(?:question|index|\?fr|\?word) script-path=https://rucu6.pages.dev/Scripts/webpage/baidu-zhidao.js, requires-body=true, tag=baidu_zhidao
+
+# ======= ooxx ======= #
+# 黑料网 //18hlw.com, 8olbt.imsatcmn.cc
+http-response ^https:\/\/(?:18hlw\.com|8olbt\.imsatcmn\.cc)\/ script-path=https://rucu6.pages.dev/Scripts/webpage/myblockads.js, requires-body=true, binary-body-mode=false, timeout=10, tag=18hlw_web_ads
+
+# 夜未央 //miniapp2.52ywy.com
+http-response ^https:\/\/miniapp2\.52ywy\.com\/(?:ywyminiappbot\/(?:getLatest|getLatestAll|getCategoryVideos|getSearch|series|movies|tv|av|getbloger)|player\/getPlayer)(\?|$) script-path=https://rucu6.pages.dev/Scripts/webpage/52ywy.js, requires-body=true, binary-body-mode=false, timeout=10, tag=52ywy_web_ads
+
+# 字母圈 //*.zimuquan*.top, *.zimuquan*.uk, *.zimuquan*.com
+http-response ^https?:\/\/[^\/]*zimuquan[^\/]*\/index\.php\/vod\/play\/ script-path=https://rucu6.pages.dev/Scripts/webpage/zimuquan.js, requires-body=true, binary-body-mode=false, timeout=10, tag=zmq_web_ads
+
+# E-Hentai //e-hentai.org
+http-response ^https:\/\/e-hentai\.org\/g\/ script-path=https://rucu6.pages.dev/Scripts/webpage/ehentai.js, requires-body=true, tag=ehentai_web_ads
+
+# Hanime1 //hanime1.me
+http-response ^https:\/\/hanime1\.me\/(?!(favicon|css|js|cdn-cgi|load)) script-path=https://rucu6.pages.dev/Scripts/webpage/hanime.js, requires-body=true, tag=hanime_web_ads
+
+# JavDB //javdb.com
+http-response ^https:\/\/javdb\.com\/(?!over18\?) script-path=https://rucu6.pages.dev/Scripts/webpage/myblockads.js, requires-body=true, tag=javdb_web_ads
+
+# MissAV //missav.ai, missav.ws
+http-response ^https:\/\/missav\.(?:ai|ws)\/(?!favicon)(?!(build|fonts|img|js|api|cdn-cgi)\/). script-path=https://rucu6.pages.dev/Scripts/webpage/missav.js, requires-body=true, binary-body-mode=false, timeout=10, tag=missav_web_ads
+
+[MITM]
+hostname=*.google.cn, asserts.avple.tv, kelee.one, rule.kelee.one, loon.103516.xyz, e-hentai.org, exhentai.org, *.pornhub.com, boxer.baidu.com, m.baidu.com, www.baidu.com, zhidao.baidu.com, 18hlw.com, 8olbt.imsatcmn.cc, miniapp2.52ywy.com, *.zimuquan*.top, *.zimuquan*.uk, *.zimuquan*.com, hanime1.me, javdb.com, missav.ai, missav.ws
