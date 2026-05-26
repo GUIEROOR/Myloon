@@ -1,0 +1,50 @@
+#!name = Telegram
+#!desc = Telegram外部链接跳转，可选目标客户端为Telegram、Swiftgram、Turrit、iMe、Nicegram、Lingogram，默认选择Telegram跳转至官方客户端。
+#!openUrl = https://apps.apple.com/app/id686449807
+#!author = sooyaaabo[https://github.com/sooyaaabo]
+#!tag = 功能增强
+#!system = 
+#!system_version = 
+#!loon_version=3.2.4(787)
+#!homepage = https://loonlab.103516.xyz/Plugin/
+#!icon = https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Telegram-01.png
+#!date = 2026-05-27 00:00
+
+# 2025-09-06
+# https://github.com/Repcz/Tool/blob/X/Surge/Module/Function/FKTG.sgmodule
+
+[Argument]
+t.me_redirect = select, "Telegram", "Swiftgram", "Turrit", "iMe", "Nicegram", "Lingogram", tag = 跳转至对应客户端
+
+[Rule]
+DOMAIN-SUFFIX, swiftgram.app, PROXY
+DOMAIN-SUFFIX, iturrit.com, PROXY
+DOMAIN-SUFFIX, imem.app, PROXY
+DOMAIN-SUFFIX, nicegram.app, PROXY
+DOMAIN-SUFFIX, nicegram.cloud, PROXY
+DOMAIN-SUFFIX, intentchat.app, PROXY
+
+[Rewrite]
+# Telegram
+# (https:\/\/)?t\.me\/(.+) 302 tg://resolve?domain=$2
+
+# Swiftgram
+# (https:\/\/)?t\.me\/(.+) 302 sg://resolve?domain=$2
+
+# Turrit
+# (https:\/\/)?t\.me\/(.+) 302 turrit://resolve?domain=$2
+
+# Telegram
+# (https:\/\/)?t\.me\/(.+) 302 ime://resolve?domain=$2
+
+# iMe
+# (https:\/\/)?t\.me\/(.+) 302 ng://resolve?domain=$2
+
+# Lingogram
+# (https:\/\/)?t\.me\/(.+) 302 lingo://resolve?domain=$2
+
+[Script]
+http-response (https:\/\/)?t\.me\/(.+) script-path = https://loon.103516.xyz/Script/Telegram/t.me_redirect.js, requires-body = false, tag = [Telegram]t.me重定向, argument=[{t.me_redirect}]
+
+[MitM]
+hostname = t.me

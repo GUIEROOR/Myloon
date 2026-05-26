@@ -1,0 +1,2500 @@
+<html><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Loon 插件仓库</title>
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Loon 插件仓库">
+    <meta name="format-detection" content="telephone=no">
+
+    <link rel="icon" href="../Icon/PluginLab/LoonPluginLab.png" type="image/png">
+    <link rel="apple-touch-icon" href="../Icon/PluginLab/LoonPluginLab-White.png">
+
+    <meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+
+    <style>
+        /* CSS 变量定义：包含颜色、间距与阴影配置 */
+        :root {
+          --spacing-page-h: 1.5rem;
+          --header-inner-height: 62px;
+          /* 浅色模式配色 */
+          --bg-body: #F2F2F7;
+          --bg-card: #FFFFFF;
+          --bg-card-hover: rgba(255, 255, 255, 0.65);
+          --bg-input: #E3E3E8;
+          --bg-header: rgba(242, 242, 247, 0.85);
+          --text-primary: #1c1c1e;
+          --text-secondary: #8e8e93;
+          --text-tertiary: #aeaeb2;
+          --color-accent: #007aff;
+          --border-separator: #c6c6c8;
+          --border-dashed: #d1d1d6;
+          --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+          --shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.08);
+          --radius-md: 12px;
+          --radius-lg: 16px;
+          --glass-blur: blur(20px);
+        }
+    
+        /* 深色模式变量覆盖 */
+        @media (prefers-color-scheme: dark) {
+          :root {
+            --bg-body: #000000;
+            --bg-card: #1C1C1E;
+            --bg-card-hover: rgba(44, 44, 46, 0.75);
+            --bg-input: #2C2C2E;
+            --bg-header: rgba(0, 0, 0, 0.85);
+            --text-primary: #f2f2f7;
+            --text-secondary: #8e8e93;
+            --text-tertiary: #636366;
+            --color-accent: #0a84ff;
+            --border-separator: #38383a;
+            --border-dashed: #3a3a3c;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+            --shadow-hover: 0 12px 24px rgba(0, 0, 0, 0.4);
+          }
+        }
+    
+        /* 基础样式重置 */
+        *,
+        *::before,
+        *::after {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          -webkit-tap-highlight-color: transparent;
+        }
+    
+        html {
+          font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", Roboto, sans-serif;
+          -webkit-font-smoothing: antialiased;
+          background-color: var(--bg-body);
+          color: var(--text-primary);
+        }
+    
+        body {
+          line-height: 1.5;
+          min-height: 100vh;
+          position: relative;
+          z-index: 1;
+          overscroll-behavior-y: none;
+        }
+    
+        /* 防止移动端橡皮筋效果露底 */
+        body::before,
+        body::after {
+          content: '';
+          position: fixed;
+          left: 0;
+          width: 100%;
+          height: 100vh;
+          z-index: -999;
+          pointer-events: none;
+          background-color: var(--bg-body);
+        }
+    
+        body::before {
+          bottom: 100%;
+        }
+    
+        body::after {
+          top: 100%;
+        }
+    
+        input,
+        button {
+          font-family: inherit;
+          border: none;
+          outline: none;
+          background: transparent;
+          -webkit-appearance: none;
+          appearance: none;
+        }
+    
+        /* 顶部导航栏样式 */
+        header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: calc(var(--header-inner-height) + env(safe-area-inset-top));
+          padding-top: env(safe-area-inset-top);
+          padding-left: calc(var(--spacing-page-h) + env(safe-area-inset-left));
+          padding-right: calc(var(--spacing-page-h) + env(safe-area-inset-right));
+          z-index: 100;
+          background: var(--bg-header);
+          backdrop-filter: saturate(180%) var(--glass-blur);
+          -webkit-backdrop-filter: saturate(180%) var(--glass-blur);
+          border-bottom: 0.5px solid var(--border-separator);
+        }
+    
+        .header-logo img {
+          height: 36px;
+          display: block;
+          border-radius: 8px;
+        }
+    
+        .header-title-block {
+          position: absolute;
+          left: 50%;
+          top: calc(50% + env(safe-area-inset-top) / 2);
+          transform: translate(-50%, -50%);
+          width: 100%;
+          padding: 0 100px;
+          text-align: center;
+          pointer-events: none;
+        }
+    
+        header h1 {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: var(--text-primary);
+        }
+    
+        header p {
+          margin-top: 2px;
+          font-size: 0.75rem;
+          color: var(--text-secondary);
+        }
+    
+        /* 移动端菜单开关动画 */
+        .menu-toggle {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-end;
+          width: 32px;
+          height: 32px;
+          cursor: pointer;
+          gap: 5px;
+          z-index: 102;
+        }
+    
+        .menu-toggle span {
+          display: block;
+          height: 2.5px;
+          background-color: var(--color-accent);
+          border-radius: 4px;
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+    
+        .menu-toggle span:nth-child(1) {
+          width: 22px;
+        }
+    
+        .menu-toggle span:nth-child(2) {
+          width: 16px;
+          opacity: 1;
+        }
+    
+        .menu-toggle span:nth-child(3) {
+          width: 22px;
+        }
+    
+        .menu-toggle.active span:nth-child(1) {
+          transform: translateY(7.5px) rotate(45deg);
+          background-color: var(--text-primary);
+        }
+    
+        .menu-toggle.active span:nth-child(2) {
+          opacity: 0;
+        }
+    
+        .menu-toggle.active span:nth-child(3) {
+          transform: translateY(-7.5px) rotate(-45deg);
+          background-color: var(--text-primary);
+        }
+    
+        /* 功能菜单列表 */
+        .secondary-menu {
+          position: absolute;
+          top: calc(100% + 12px);
+          right: calc(var(--spacing-page-h) + env(safe-area-inset-right));
+          background: var(--bg-card);
+          border-radius: 14px;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+          padding: 0.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.2rem;
+          z-index: 101;
+          min-width: 180px;
+          visibility: hidden;
+          opacity: 0;
+          transform: scale(0.92) translateY(-10px);
+          transform-origin: top right;
+          transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+        }
+    
+        .secondary-menu.active {
+          visibility: visible;
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+    
+        .menu-item {
+          display: flex;
+          align-items: center;
+          padding: 12px 14px;
+          text-decoration: none;
+          color: var(--text-primary);
+          width: 100%;
+          font-size: 0.95rem;
+          border-radius: 8px;
+          font-weight: 500;
+          transition: background-color 0.2s;
+          cursor: pointer;
+        }
+    
+        /* 仅在支持 hover 的设备上启用菜单 hover 效果 */
+        @media (hover: hover) {
+          .menu-item:hover {
+            background-color: var(--bg-body);
+          }
+        }
+    
+        .menu-item-content {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-grow: 1;
+        }
+    
+        /* 图标样式处理 */
+        .icon {
+          width: 22px;
+          height: 22px;
+          background-color: var(--color-accent);
+          -webkit-mask-repeat: no-repeat;
+          mask-repeat: no-repeat;
+          -webkit-mask-size: 100% 100%;
+          mask-size: 100% 100%;
+          flex-shrink: 0;
+        }
+    
+        .icon-telegram {
+          -webkit-mask-image: url('../Icon/PluginLab/Telegram.svg');
+          mask-image: url('../Icon/PluginLab/Telegram.svg');
+        }
+    
+        .icon-github {
+          -webkit-mask-image: url('../Icon/PluginLab/GitHub.svg');
+          mask-image: url('../Icon/PluginLab/GitHub.svg');
+        }
+    
+        .icon-install {
+          -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z'/%3E%3C/svg%3E");
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z'/%3E%3C/svg%3E");
+        }
+    
+        #install-pwa {
+          display: none;
+        }
+    
+        /* 页面主容器布局 */
+        .wrap {
+          max-width: 1100px;
+          margin: 0 auto;
+          padding-left: calc(var(--spacing-page-h) + env(safe-area-inset-left));
+          padding-right: calc(var(--spacing-page-h) + env(safe-area-inset-right));
+          padding-top: calc(var(--header-inner-height) + env(safe-area-inset-top) + 1.5rem);
+          padding-bottom: calc(3rem + env(safe-area-inset-bottom));
+        }
+    
+        /* 滚动公告栏样式 */
+        .announcement-banner {
+          background-color: #fff9de;
+          border: 1px solid #e1e4e8;
+          border-radius: var(--radius-lg);
+          margin-bottom: 1rem;
+          position: relative;
+          height: 50px;
+          display: flex;
+          align-items: center;
+          cursor: pointer;
+          overflow: hidden;
+        }
+    
+        @media (prefers-color-scheme: dark) {
+          .announcement-banner {
+            background-color: #3a372d;
+            border-color: #444;
+          }
+        }
+    
+        .banner-item {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          padding: 0 16px;
+          font-size: 0.95rem;
+          font-weight: 500;
+          color: #1d1d1f;
+          opacity: 0;
+          transition: opacity 0.5s ease-in-out;
+          z-index: 0;
+          white-space: nowrap;
+          transform: translateX(0);
+        }
+    
+        @media (prefers-color-scheme: dark) {
+          .banner-item {
+            color: #e2e2e2;
+          }
+        }
+    
+        .banner-item.active {
+          opacity: 1;
+          z-index: 1;
+        }
+    
+        /* 搜索框与筛选标签 */
+        .search-box {
+          margin-bottom: 2rem;
+        }
+    
+        #search {
+          width: 100%;
+          padding: 12px 18px;
+          font-size: 1.05rem;
+          border-radius: var(--radius-md);
+          background: var(--bg-input);
+          color: var(--text-primary);
+          transition: all 0.2s;
+        }
+    
+        #search:focus {
+          background: var(--bg-card);
+          box-shadow: 0 0 0 2px var(--color-accent), var(--shadow-sm);
+        }
+    
+        .tabs {
+          display: flex;
+          gap: 0.8rem;
+          flex-wrap: wrap;
+          margin-top: 1rem;
+        }
+    
+        .tabs button {
+          padding: 0.6rem 1.2rem;
+          border-radius: 999px;
+          background: var(--bg-card);
+          color: var(--text-secondary);
+          font-size: 0.9rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          box-shadow: var(--shadow-sm);
+        }
+    
+        /* 仅在支持 hover 的设备上启用 Tab hover 效果 */
+        @media (hover: hover) {
+          .tabs button:hover {
+            color: var(--text-primary);
+            transform: translateY(-1px);
+          }
+        }
+    
+        .tabs button.active {
+          background: var(--color-accent);
+          color: #fff;
+          box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+          transform: scale(1.02);
+        }
+    
+        .section-title {
+          font-size: 1.4rem;
+          font-weight: 700;
+          margin: 2rem 0 1rem 0.2rem;
+          color: var(--text-primary);
+        }
+    
+        /* 插件卡片网格布局与样式 */
+        .list {
+          display: grid;
+          gap: 1.5rem;
+          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        }
+    
+        .card {
+          background: var(--bg-card);
+          border-radius: var(--radius-lg);
+          text-decoration: none;
+          color: inherit;
+          position: relative;
+          transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+          display: flex;
+          flex-direction: column;
+          box-shadow: var(--shadow-sm);
+          overflow: hidden;
+          height: 100%;
+        }
+    
+        /* 仅在支持 hover 的设备（桌面端）上启用卡片放大、阴影和背景色变化 */
+        @media (hover: hover) {
+          .card:hover {
+            transform: translateY(-6px) scale(1.005);
+            box-shadow: var(--shadow-hover);
+            background-color: var(--bg-card-hover);
+            backdrop-filter: saturate(180%) blur(10px);
+            -webkit-backdrop-filter: saturate(180%) blur(10px);
+            z-index: 10;
+          }
+        }
+    
+        .card:active {
+          transform: scale(0.97);
+          transition-duration: 0.1s;
+        }
+    
+        .card-top {
+          padding: 1.2rem 1.2rem 0.5rem 1.2rem;
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+        }
+    
+        .card-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 12px;
+          object-fit: cover;
+          flex-shrink: 0;
+          background: #f1f1f1;
+          box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+    
+        @media (prefers-color-scheme: dark) {
+          .card-icon {
+            background: #333;
+          }
+        }
+    
+        .card-header-info {
+          flex: 1;
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-start;
+          gap: 6px;
+        }
+    
+        .card-title {
+          font-size: 1.15rem;
+          font-weight: 600;
+          color: var(--text-primary);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          line-height: 1.3;
+        }
+    
+        .author-wrapper {
+          display: flex;
+          align-items: center;
+          min-height: 20px;
+          gap: 6px;
+          flex-wrap: wrap;
+        }
+    
+        .author-avatar {
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          object-fit: cover;
+          display: block;
+          background-color: rgba(0, 0, 0, 0.05);
+          border: 1px solid rgba(0, 0, 0, 0.05);
+          position: relative;
+          transform: translateY(-1px);
+          transition: transform 0.2s ease;
+        }
+    
+        /* 仅在支持 hover 的设备上启用头像放大 */
+        @media (hover: hover) {
+          .author-avatar:hover {
+            transform: scale(1.2);
+          }
+        }
+    
+        .author-avatar:active {
+          transform: translateY(-1px) scale(1);
+        }
+    
+        @media (prefers-color-scheme: dark) {
+          .author-avatar {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.1);
+          }
+        }
+    
+        .card-desc {
+          font-size: 0.9rem;
+          color: var(--text-secondary);
+          line-height: 1.6;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          word-break: break-word;
+          padding: 0 1.2rem;
+          margin-top: 0.5rem;
+          margin-bottom: 1rem;
+          flex-grow: 1;
+        }
+    
+        .card-footer {
+          border-top: 1px dashed var(--border-dashed);
+          padding: 0.8rem 1.2rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background-color: rgba(0, 0, 0, 0.01);
+        }
+    
+        .card-tags {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem;
+        }
+    
+        .tag-item {
+          padding: 3px 8px;
+          font-size: 0.7rem;
+          font-weight: 600;
+          color: var(--color-accent);
+          background: rgba(0, 122, 255, 0.1);
+          border-radius: 100px;
+        }
+    
+        @media (prefers-color-scheme: dark) {
+          .tag-item {
+            background: rgba(10, 132, 255, 0.2);
+            color: #66b2ff;
+          }
+        }
+    
+        .card-update-time {
+          font-size: 0.75rem;
+          color: var(--text-tertiary);
+          font-weight: 500;
+          white-space: nowrap;
+        }
+    
+        .empty {
+          text-align: center;
+          color: var(--text-tertiary);
+          padding: 4rem 1rem;
+          grid-column: 1 / -1;
+        }
+    
+        footer {
+          text-align: center;
+          font-size: 0.85rem;
+          color: var(--text-tertiary);
+          margin-top: 2rem;
+          padding-bottom: 1rem;
+          line-height: 1.8;
+        }
+    
+        /* 桌面端大屏适配 */
+        @media (min-width: 768px) {
+          :root {
+            --spacing-page-h: 2rem;
+          }
+    
+          header {
+            padding-left: 2rem;
+            padding-right: 2rem;
+          }
+    
+          .header-title-block {
+            top: 50%;
+          }
+    
+          header h1 {
+            font-size: 1.4rem;
+          }
+    
+          .secondary-menu {
+            display: flex !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            transform: none !important;
+            transition: none !important;
+            position: static;
+            flex-direction: row;
+            background: none;
+            box-shadow: none;
+            padding: 0;
+            min-width: auto;
+            align-items: center;
+            gap: 0.3rem;
+          }
+    
+          .menu-toggle {
+            display: none;
+          }
+    
+          .menu-item {
+            width: auto;
+            padding: 8px;
+            border-radius: 50%;
+            gap: 2px;
+          }
+    
+          /* 这里的 hover 在桌面模式下生效，且我们加上了 hover:hover 确保逻辑一致 */
+          @media (hover: hover) {
+            .menu-item:hover {
+              background-color: rgba(0, 0, 0, 0.05);
+            }
+          }
+    
+          @media (prefers-color-scheme: dark) and (hover: hover) {
+            .menu-item:hover {
+              background-color: rgba(255, 255, 255, 0.1);
+            }
+          }
+    
+          .menu-item-content span:not(.icon) {
+            display: none;
+          }
+    
+          .menu-item-content {
+            gap: 0;
+          }
+    
+          #install-pwa {
+            display: none !important;
+          }
+    
+          .wrap {
+            padding-left: 2rem;
+            padding-right: 2rem;
+            padding-top: calc(var(--header-inner-height) + 2rem);
+          }
+        }
+    </style>
+<style type="text/css" id="__via_marker__"></style></head>
+
+<body>
+    <header>
+        <div class="header-logo">
+            <a href="" title="刷新页面" aria-label="刷新页面">
+                <img src="../Icon/PluginLab/LoonPluginLab.png" alt="Loon Plugin Lab Logo">
+            </a>
+        </div>
+        <div class="header-title-block">
+            <h1>Loon 插件仓库</h1>
+            <p>点击插件卡片即可跳转安装插件</p>
+        </div>
+        <div class="header-controls">
+            <button id="menu-toggle" class="menu-toggle" aria-label="更多功能" title="更多功能">
+                <span></span><span></span><span></span>
+            </button>
+            <div id="secondary-menu" class="secondary-menu">
+                <div id="install-pwa" class="menu-item" aria-label="安装应用" title="安装应用">
+                    <div class="menu-item-content">
+                        <span class="icon icon-install"></span>
+                        <span>安装应用</span>
+                    </div>
+                </div>
+                <a href="https://t.me/BoStudioHub" target="_blank" class="menu-item" aria-label="Telegram" title="Telegram">
+                    <div class="menu-item-content">
+                        <span class="icon icon-telegram"></span>
+                        <span>Telegram</span>
+                    </div>
+                </a>
+                <a href="https://github.com/sooyaaabo/LoonLab" target="_blank" class="menu-item" aria-label="GitHub" title="GitHub">
+                    <div class="menu-item-content">
+                        <span class="icon icon-github"></span>
+                        <span>GitHub</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrap">
+        <div class="announcement-banner" id="announcementBanner"><p class="banner-item active" style="transition: transform 6.933333s linear; transform: translateX(-416px);">禁止在中华人民共和国境内平台公开传播本仓库内容以及将其用于任何商业或非法用途！如有发现，请向平台举报！</p><p class="banner-item">本网站由个人制作与维护，与Loon官方无关。</p><p class="banner-item">若插件提示"Loon的版本过旧，插件功能受限"，请自行前往 App Store 进行软件更新。</p><p class="banner-item">若插件提示"插件中部分资源不可用，插件功能受限"，请点击插件进入详情页后手动刷新。</p></div>
+
+        <div class="search-box">
+            <input id="search" placeholder="搜索插件名称或标签…">
+            <div class="tabs">
+                <button class="tab active" data-cat="all">全部</button>
+                <button class="tab" data-cat="去广告">去广告</button>
+                <button class="tab" data-cat="功能增强">功能增强</button>
+                <button class="tab" data-cat="解锁会员">解锁会员</button>
+                <button class="tab" data-cat="定时任务">定时任务</button>
+            </div>
+        </div>
+
+        <div class="section-title" id="sectionTitle">全部 · 82 个插件</div>
+
+        <div class="list" id="list"><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/1.1.1.1.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/1.1.1.1-01.png" class="card-icon" alt="1.1.1.1 with WARP icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">1.1.1.1 with WARP</h3>
+                    <div class="author-wrapper"><a href="https://github.com/VirgilClyne" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/VirgilClyne.png" class="author-avatar" alt="VirgilClyne" title="VirgilClyne" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/I-am-R-E" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/I-am-R-E.png" class="author-avatar" alt="I-am-R-E" title="I-am-R-E" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">WARP检测面板与节点提取，点击下方主页链接前往配置1.1.1.1的BoxJs配置。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/123Pan.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/123Pan-01.png" class="card-icon" alt="123云盘 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">123云盘</h3>
+                    <div class="author-wrapper"><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ddgksf2013" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ddgksf2013.png" class="author-avatar" alt="ddgksf2013" title="ddgksf2013" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤123云盘应用端及网页端广告，解除网页端流量1G下载限制（请单文件下载，不要文件夹或多文件下载）。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Alipan.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Alipan-01.png" class="card-icon" alt="阿里云盘 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">阿里云盘</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤阿里云盘广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Amap.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Amap.png" class="card-icon" alt="高德地图 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">高德地图</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/kokoryh" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/kokoryh.png" class="author-avatar" alt="kokoryh" title="kokoryh" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/kelv1n1n" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/kelv1n1n.png" class="author-avatar" alt="kelv1n1n" title="kelv1n1n" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤高德地图广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/AppRaven.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/AppRaven.png" class="card-icon" alt="AppRaven icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">AppRaven</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Yu9191" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Yu9191.png" class="author-avatar" alt="Yu9191" title="Yu9191" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">AppRaven解锁会员</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">解锁会员</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/AppStoreMonitor.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/AppStore-02.png" class="card-icon" alt="AppStore Monitor icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">AppStore Monitor</h3>
+                    <div class="author-wrapper"><a href="https://github.com/sooyaaabo" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/sooyaaabo.png" class="author-avatar" alt="sooyaaabo" title="sooyaaabo" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">定时监控App Store内App的更新状态。\n可输入多个AppID，可自定义查询区域顺序（不填则为默认顺序），均以逗号分隔。\n可填入Bark Key使用Bark推送通知，若不填则默认使用Loon推送通知。\n可填入Bark Group分组名称，默认为空值，无分组。\n可选择Bark推送通知音效，默认值为system，使用系统默认提醒音效。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span><span class="tag-item">定时任务</span></div>
+                  <p class="card-update-time">2026-04-09 17:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/AppleOSMonitor.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/iBetame.png" class="card-icon" alt="AppleOS Monitor icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">AppleOS Monitor</h3>
+                    <div class="author-wrapper"><a href="https://github.com/sooyaaabo" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/sooyaaabo.png" class="author-avatar" alt="sooyaaabo" title="sooyaaabo" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">定时监控Apple系统的版本更新。\n可自定义选择需要监控的设备系统。\n可输入多个OS版本，不填则默认所有OS版本，以逗号分隔。\n可选择版本类型，默认为all即所有版本。\n可填入Bark Group分组名称，默认为空值，无分组。\n可填入Bark Key使用Bark推送通知，不填则默认使用Loon推送通知。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span><span class="tag-item">定时任务</span></div>
+                  <p class="card-update-time">2026-04-09 17:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/BaiduNetDisk.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/BaiduNetDisk.png" class="card-icon" alt="百度网盘 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">百度网盘</h3>
+                    <div class="author-wrapper"><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ddgksf2013" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ddgksf2013.png" class="author-avatar" alt="ddgksf2013" title="ddgksf2013" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/chxm1023" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/chxm1023.png" class="author-avatar" alt="chxm1023" title="chxm1023" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://t.me/GieGie777" target="_blank" rel="noopener noreferrer">
+                      <img src="" class="author-avatar" alt="GieGie777" title="GieGie777" loading="lazy" onerror="this.style.display='none'" style="display: none;">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤百度网盘广告，解锁部分SVIP功能。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span><span class="tag-item">解锁会员</span></div>
+                  <p class="card-update-time">2026-05-10 19:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/BaiduTieba.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/BaiduTieba.png" class="card-icon" alt="百度贴吧 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">百度贴吧</h3>
+                    <div class="author-wrapper"><a href="https://github.com/app2smile" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/app2smile.png" class="author-avatar" alt="app2smile" title="app2smile" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤百度贴吧广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Bilibili.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/BilibiliPink.png" class="card-icon" alt="哔哩哔哩 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">哔哩哔哩</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/kokoryh" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/kokoryh.png" class="author-avatar" alt="kokoryh" title="kokoryh" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/Maasea" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Maasea.png" class="author-avatar" alt="Maasea" title="Maasea" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤哔哩哔哩广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-21 23:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/BlockAds.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/Other/ShieldReject.png" class="card-icon" alt="广告拦截合集 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">广告拦截合集</h3>
+                    <div class="author-wrapper"><a href="https://github.com/fmz200" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/fmz200.png" class="author-avatar" alt="fmz200" title="fmz200" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/zirawell" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/zirawell.png" class="author-avatar" alt="zirawell" title="zirawell" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">针对部分APP和小程序广告进行拦截，某些APP要清除缓存或者重新安装拦截广告才会生效！</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-05-25 22:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/BodianMusic.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/BodianMusic.png" class="card-icon" alt="波点音乐 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">波点音乐</h3>
+                    <div class="author-wrapper"><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ZenmoFeiShi" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ZenmoFeiShi.png" class="author-avatar" alt="ZenmoFeiShi" title="ZenmoFeiShi" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/mist-whisper" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/mist-whisper.png" class="author-avatar" alt="mist-whisper" title="mist-whisper" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://t.me/GieGie777" target="_blank" rel="noopener noreferrer">
+                      <img src="" class="author-avatar" alt="GieGie777" title="GieGie777" loading="lazy" onerror="this.style.display='none'" style="display: none;">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤波点音乐广告，解锁会员功能（打开软件后切换到个人页面出现会员logo即可使用）。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span><span class="tag-item">解锁会员</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/BoxJs.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/BoxJs.png" class="card-icon" alt="BoxJs icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">BoxJs</h3>
+                    <div class="author-wrapper"><a href="https://github.com/chavyleung" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/chavyleung.png" class="author-avatar" alt="chavyleung" title="chavyleung" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">Data manager，使用前请在本插件的详情页面为[PROXY]项分配代理策略。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/CMS_Adblock.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/CMSPlayer.png" class="card-icon" alt="CMS Adblocker icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">CMS Adblocker</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Yswag" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Yswag.png" class="author-avatar" alt="Yswag" title="Yswag" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤CMS资源插入式广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Cainiao.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Cainiao.png" class="card-icon" alt="菜鸟 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">菜鸟</h3>
+                    <div class="author-wrapper"><a href="https://github.com/githubdulong" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/githubdulong.png" class="author-avatar" alt="githubdulong" title="githubdulong" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤菜鸟广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/ChinaMobile.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/ChinaMobile.png" class="card-icon" alt="中国移动 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">中国移动</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Yuheng0101" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Yuheng0101.png" class="author-avatar" alt="Yuheng0101" title="Yuheng0101" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/anker1209" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/anker1209.png" class="author-avatar" alt="anker1209" title="anker1209" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ChinaTelecomOperators" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ChinaTelecomOperators.png" class="author-avatar" alt="ChinaTelecomOperators" title="ChinaTelecomOperators" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">1.过滤中国移动广告，不对内部活动进行相关广告去除；2.查询套餐内通话、套餐使用情况（默认关闭）。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/ChinaUnicom.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/ChinaUnicom.png" class="card-icon" alt="中国联通 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">中国联通</h3>
+                    <div class="author-wrapper"><a href="https://github.com/mist-whisper" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/mist-whisper.png" class="author-avatar" alt="mist-whisper" title="mist-whisper" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤中国联通广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/ColorfulCloudsWeatherPro.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/ColorfulCloudsWeatherPro.png" class="card-icon" alt="彩云天气Pro icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">彩云天气Pro</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/Keywos" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Keywos.png" class="author-avatar" alt="Keywos" title="Keywos" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤彩云天气广告，解锁SVIP功能。\n解锁功能需App版本低于7.20.2。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span><span class="tag-item">解锁会员</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/CookieTask.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Notifyman.png" class="card-icon" alt="Cookie &amp; Task icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Cookie &amp; Task</h3>
+                    <div class="author-wrapper"><a href="https://github.com/FoKit" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/FoKit.png" class="author-avatar" alt="FoKit" title="FoKit" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/Sliverkiss" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Sliverkiss.png" class="author-avatar" alt="Sliverkiss" title="Sliverkiss" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/GoodHolidays" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/GoodHolidays.png" class="author-avatar" alt="GoodHolidays" title="GoodHolidays" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ZenmoFeiShi" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ZenmoFeiShi.png" class="author-avatar" alt="ZenmoFeiShi" title="ZenmoFeiShi" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/NobyDa" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/NobyDa.png" class="author-avatar" alt="NobyDa" title="NobyDa" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ClydeTime" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ClydeTime.png" class="author-avatar" alt="ClydeTime" title="ClydeTime" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/sooyaaabo" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/sooyaaabo.png" class="author-avatar" alt="sooyaaabo" title="sooyaaabo" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">自动完成每日签到任务，按需开启相应功能即可。\n具体使用方法请查看所引用脚本或插件内详细说明。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">定时任务</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/CoolApk.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/CoolApk.png" class="card-icon" alt="酷安 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">酷安</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ZenmoFeiShi" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ZenmoFeiShi.png" class="author-avatar" alt="ZenmoFeiShi" title="ZenmoFeiShi" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/VenenoSix24" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/VenenoSix24.png" class="author-avatar" alt="VenenoSix24" title="VenenoSix24" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤酷安广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-07 22:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/CosmosFM.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/CosmosFM.png" class="card-icon" alt="小宇宙 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">小宇宙</h3>
+                    <div class="author-wrapper"><a href="https://github.com/mist-whisper" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/mist-whisper.png" class="author-avatar" alt="mist-whisper" title="mist-whisper" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤小宇宙广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/DiDi.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/DiDi.png" class="card-icon" alt="滴滴出行 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">滴滴出行</h3>
+                    <div class="author-wrapper"><a href="https://github.com/sooyaaabo" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/sooyaaabo.png" class="author-avatar" alt="sooyaaabo" title="sooyaaabo" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/kelv1n1n" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/kelv1n1n.png" class="author-avatar" alt="kelv1n1n" title="kelv1n1n" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ZenmoFeiShi" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ZenmoFeiShi.png" class="author-avatar" alt="ZenmoFeiShi" title="ZenmoFeiShi" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤滴滴出行广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-05-14 16:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/DingdongMaicai.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Dingdongmaicai.png" class="card-icon" alt="叮咚买菜 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">叮咚买菜</h3>
+                    <div class="author-wrapper"><a href="https://github.com/mist-whisper" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/mist-whisper.png" class="author-avatar" alt="mist-whisper" title="mist-whisper" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/zirawell" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/zirawell.png" class="author-avatar" alt="zirawell" title="zirawell" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤叮咚买菜广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Douban.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Douban.png" class="card-icon" alt="豆瓣 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">豆瓣</h3>
+                    <div class="author-wrapper"><a href="https://github.com/kelv1n1n" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/kelv1n1n.png" class="author-avatar" alt="kelv1n1n" title="kelv1n1n" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/fmz200" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/fmz200.png" class="author-avatar" alt="fmz200" title="fmz200" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤豆瓣广告，仅去除开屏广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Fanshu.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Fanshu.png" class="card-icon" alt="帆书 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">帆书</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Yuheng0101" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Yuheng0101.png" class="author-avatar" alt="Yuheng0101" title="Yuheng0101" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤帆书（樊登读书）广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Fenbi.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Fenbi.png" class="card-icon" alt="粉笔 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">粉笔</h3>
+                    <div class="author-wrapper"><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/sooyaaabo" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/sooyaaabo.png" class="author-avatar" alt="sooyaaabo" title="sooyaaabo" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤粉笔广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-07 11:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/GitHub.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/GitHub-01.png" class="card-icon" alt="GitHub icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">GitHub</h3>
+                    <div class="author-wrapper"><a href="https://github.com/sooyaaabo" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/sooyaaabo.png" class="author-avatar" alt="sooyaaabo" title="sooyaaabo" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">设置Accept-Language避免429错误</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Goofish.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Goofish.png" class="card-icon" alt="闲鱼 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">闲鱼</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ZenmoFeiShi" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ZenmoFeiShi.png" class="author-avatar" alt="ZenmoFeiShi" title="ZenmoFeiShi" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/kelv1n1n" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/kelv1n1n.png" class="author-avatar" alt="kelv1n1n" title="kelv1n1n" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤闲鱼广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-05-19 00:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Google.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Google.png" class="card-icon" alt="Google icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Google</h3>
+                    <div class="author-wrapper"><a href="https://github.com/sooyaaabo" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/sooyaaabo.png" class="author-avatar" alt="sooyaaabo" title="sooyaaabo" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">将Google搜索重定向至.com域名，如遇频繁跳转请禁用本插件。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/HUPU.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/HUPU-01.png" class="card-icon" alt="虎扑 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">虎扑</h3>
+                    <div class="author-wrapper"><a href="https://github.com/kelv1n1n" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/kelv1n1n.png" class="author-avatar" alt="kelv1n1n" title="kelv1n1n" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤虎扑广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/IPAManager.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/iAppStore-03.png" class="card-icon" alt="IPA Manager icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">IPA Manager</h3>
+                    <div class="author-wrapper"><a href="https://github.com/githubdulong" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/githubdulong.png" class="author-avatar" alt="githubdulong" title="githubdulong" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">下载IPA文件实现降级应用安装、已购下架应用安装。\n本插件依赖Scripting App且需解锁Pro权限。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/IPPure.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/IPPure.png" class="card-icon" alt="IPPure icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">IPPure</h3>
+                    <div class="author-wrapper"><a href="https://github.com/sooyaaabo" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/sooyaaabo.png" class="author-avatar" alt="sooyaaabo" title="sooyaaabo" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">通过IPPure接口检测IP质量。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/IQIYI.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/IQIYI.png" class="card-icon" alt="爱奇艺 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">爱奇艺</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">悦享品质 [悦享广告]</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/IQIYI_Ssports.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/IQIYI_Ssports.png" class="card-icon" alt="爱奇艺体育 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">爱奇艺体育</h3>
+                    <div class="author-wrapper"><a href="https://github.com/mist-whisper" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/mist-whisper.png" class="author-avatar" alt="mist-whisper" title="mist-whisper" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤爱奇艺体育广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/IThome.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/IThome.png" class="card-icon" alt="IT之家 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">IT之家</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Keywos" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Keywos.png" class="author-avatar" alt="Keywos" title="Keywos" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤IT之家广告，自定义移除置顶和轮播图，自定义移除项需在插件配置。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Jingdong.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Jingdong.png" class="card-icon" alt="京东 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">京东</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/Maasea" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Maasea.png" class="author-avatar" alt="Maasea" title="Maasea" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/githubdulong" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/githubdulong.png" class="author-avatar" alt="MuTu" title="MuTu" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/wf021325" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/wf021325.png" class="author-avatar" alt="苍井灰灰" title="苍井灰灰" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/mw418" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/mw418.png" class="author-avatar" alt="mw418" title="mw418" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">1.过滤京东广告；2.历史比价信息，任选其一即可。（首次使用请先打开【慢慢买App-我的】，提示【获取ck成功🎉】即可正常比价。）\n此插件仅支持京东标准模式。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Keep.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Keep.png" class="card-icon" alt="Keep icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Keep</h3>
+                    <div class="author-wrapper"><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ZenmoFeiShi" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ZenmoFeiShi.png" class="author-avatar" alt="ZenmoFeiShi" title="ZenmoFeiShi" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/kelv1n1n" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/kelv1n1n.png" class="author-avatar" alt="kelv1n1n" title="kelv1n1n" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤Keep广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-28 16:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/KuwoMusic.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/KuwoMusic.png" class="card-icon" alt="酷我音乐 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">酷我音乐</h3>
+                    <div class="author-wrapper"><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/Yuheng0101" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Yuheng0101.png" class="author-avatar" alt="Yuheng0101" title="Yuheng0101" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤酷我音乐广告，解锁会员功能。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span><span class="tag-item">解锁会员</span></div>
+                  <p class="card-update-time">2026-05-12 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Listenify.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Listenify.png" class="card-icon" alt="Listenify icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Listenify</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Yswag" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Yswag.png" class="author-avatar" alt="Yswag" title="Yswag" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">从网易云音乐获取歌词与艺人封面</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/LoonGallery.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Loon.png" class="card-icon" alt="Loon Gallery icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Loon Gallery</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Peng-YM" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Peng-YM.png" class="author-avatar" alt="Peng-YM" title="Peng-YM" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">Loon插件仓库，一键安装。使用前请在本插件的详情页面为[PROXY]项分配代理策略。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/LuckinCoffee.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/LuckinCoffee.png" class="card-icon" alt="瑞幸咖啡 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">瑞幸咖啡</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Sliverkiss" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Sliverkiss.png" class="author-avatar" alt="Sliverkiss" title="Sliverkiss" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤瑞幸咖啡广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/MangoTV.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/MangoTV.png" class="card-icon" alt="芒果TV icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">芒果TV</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/WeiGiegie" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/WeiGiegie.png" class="author-avatar" alt="WeiGiegie" title="WeiGiegie" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">天生青春 [天生广告]</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/MeetYou.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/MeetYou.png" class="card-icon" alt="美柚 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">美柚</h3>
+                    <div class="author-wrapper"><a href="https://github.com/ddgksf2013" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ddgksf2013.png" class="author-avatar" alt="ddgksf2013" title="ddgksf2013" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤美柚广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/NeteaseMusic.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/NeteaseMusic.png" class="card-icon" alt="网易云音乐 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">网易云音乐</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/Keywos" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Keywos.png" class="author-avatar" alt="Keywos" title="Keywos" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">网易云音乐全面净化，可自定义界面样式。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span><span class="tag-item">解锁会员</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Netisp-x.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/Other/Network.png" class="card-icon" alt="网络信息 𝕏 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">网络信息 𝕏</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Keywos" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Keywos.png" class="author-avatar" alt="Keywos" title="Keywos" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/xream" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/xream.png" class="author-avatar" alt="xream" title="xream" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">长按节点进行网络信息查询；支持网络变化时进行查询通知；提供 https://net-lsp-x.com 数据接口；详细参数设置见频道说明：https://t.me/zhetengsha</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/NodeSeek.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/NodeSeek.png" class="card-icon" alt="NodeSeek icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">NodeSeek</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Sliverkiss" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Sliverkiss.png" class="author-avatar" alt="Sliverkiss" title="Sliverkiss" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">NodeSeek每日签到。登录账号进入设置页面以获取Token，成功后关闭Token脚本。\n可在BoxJs中设置是否启用领取随机鸡腿，默认为固定5个鸡腿。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">定时任务</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/NodeTools.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/Other/Netisp.png" class="card-icon" alt="节点检测工具 𝕂 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">节点检测工具 𝕂</h3>
+                    <div class="author-wrapper"><a href="https://github.com/KOP-XIAO" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/KOP-XIAO.png" class="author-avatar" alt="KOP-XIAO" title="KOP-XIAO" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/xream" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/xream.png" class="author-avatar" alt="xream" title="xream" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/Keywos" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Keywos.png" class="author-avatar" alt="Keywos" title="Keywos" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/dcpengx" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/dcpengx.png" class="author-avatar" alt="dcpengx" title="dcpengx" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">节点网速测试、节点解锁状况、节点风险查询、节点入口落地查询</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/PandaTV.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/PandaTV-02.png" class="card-icon" alt="PandaTV icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">PandaTV</h3>
+                    <div class="author-wrapper"><a href="https://github.com/sooyaaabo" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/sooyaaabo.png" class="author-avatar" alt="sooyaaabo" title="sooyaaabo" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">绕过PandaTV直播源防盗检测，恢复正常播放。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-05-04 16:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Pinduoduo.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Pinduoduo.png" class="card-icon" alt="拼多多 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">拼多多</h3>
+                    <div class="author-wrapper"><a href="https://github.com/sooyaaabo" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/sooyaaabo.png" class="author-avatar" alt="sooyaaabo" title="sooyaaabo" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ZenmoFeiShi" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ZenmoFeiShi.png" class="author-avatar" alt="ZenmoFeiShi" title="ZenmoFeiShi" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/kelv1n1n" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/kelv1n1n.png" class="author-avatar" alt="kelv1n1n" title="kelv1n1n" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤拼多多广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Railway12306.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Railway12306.png" class="card-icon" alt="铁路12306 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">铁路12306</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/kokoryh" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/kokoryh.png" class="author-avatar" alt="kokoryh" title="kokoryh" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤铁路12306广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-17 12:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/RedNote.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/RedNote.png" class="card-icon" alt="小红书 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">小红书</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/fmz200" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/fmz200.png" class="author-avatar" alt="fmz200" title="fmz200" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤小红书广告，去除水印</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-05-13 19:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Reddit.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Reddit.png" class="card-icon" alt="Reddit icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Reddit</h3>
+                    <div class="author-wrapper"><a href="https://github.com/xream" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/xream.png" class="author-avatar" alt="xream" title="xream" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤应用内推广，阻止NSFW提示。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Redirect.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/Other/Web_302.png" class="card-icon" alt="Redirect icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Redirect</h3>
+                    <div class="author-wrapper"><a href="https://github.com/blackmatrix7" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/blackmatrix7.png" class="author-avatar" alt="blackmatrix7" title="blackmatrix7" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">针对部分网站进行重定向</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/RevenueCat.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/RevenueCat.png" class="card-icon" alt="RevenueCat icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">RevenueCat</h3>
+                    <div class="author-wrapper"><a href="https://github.com/chxm1023" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/chxm1023.png" class="author-avatar" alt="chxm1023" title="chxm1023" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ddgksf2013" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ddgksf2013.png" class="author-avatar" alt="ddgksf2013" title="ddgksf2013" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/Guding88" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Guding88.png" class="author-avatar" alt="Guding88" title="Guding88" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/Yu9191" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Yu9191.png" class="author-avatar" alt="Yu9191" title="Yu9191" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">RevenueCat系列解锁合集，在设置中选择需要使用的原作者脚本以使用此插件。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">解锁会员</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Script-Hub.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Script-Hub-Dark.png" class="card-icon" alt="Script Hub icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Script Hub</h3>
+                    <div class="author-wrapper"><a href="https://github.com/xream" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/xream.png" class="author-avatar" alt="xream" title="xream" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/Keywos" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Keywos.png" class="author-avatar" alt="Keywos" title="Keywos" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/CKYB" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/CKYB.png" class="author-avatar" alt="CKYB" title="CKYB" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/%E5%B0%8F%E7%99%BD%E8%84%B8" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/%E5%B0%8F%E7%99%BD%E8%84%B8.png" class="author-avatar" alt="小白脸" title="小白脸" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">重写 &amp; 规则集转换，使用前请在本插件的详情页面为[PROXY]项分配代理策略。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/SkipProxy.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/Other/SkipProxy.png" class="card-icon" alt="Skip Proxy and Real-IP Lists icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Skip Proxy and Real-IP Lists</h3>
+                    <div class="author-wrapper"><a href="https://github.com/mieqq" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/mieqq.png" class="author-avatar" alt="mieqq" title="mieqq" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">跳过部分应用的代理检测</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Soul.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Soul.png" class="card-icon" alt="Soul icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Soul</h3>
+                    <div class="author-wrapper"><a href="https://github.com/ZenmoFeiShi" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ZenmoFeiShi.png" class="author-avatar" alt="ZenmoFeiShi" title="ZenmoFeiShi" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/kelv1n1n" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/kelv1n1n.png" class="author-avatar" alt="kelv1n1n" title="kelv1n1n" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/mist-whisper" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/mist-whisper.png" class="author-avatar" alt="mist-whisper" title="mist-whisper" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">Soul全面净化</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-14 23:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Spotify.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Spotify.png" class="card-icon" alt="Spotify icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Spotify</h3>
+                    <div class="author-wrapper"><a href="https://github.com/001ProMax" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/001ProMax.png" class="author-avatar" alt="001ProMax" title="001ProMax" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤Spotify广告，修改插件自定义配置项需要重新登陆方可生效。适用于9.1.14及以下版本。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/StreamingMedia.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Conflux.png" class="card-icon" alt="流媒体解锁测试 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">流媒体解锁测试</h3>
+                    <div class="author-wrapper"><a href="https://github.com/huskydsb" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/huskydsb.png" class="author-avatar" alt="huskydsb" title="huskydsb" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">设置不同流媒体规则所经策略组，访问服务检测网页（https://streaming.test），点击所需要测试的流媒体卡片，等待测试结果即可。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Sub-Store.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Sub-Store.png" class="card-icon" alt="Sub-Store icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Sub-Store</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Peng-YM" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Peng-YM.png" class="author-avatar" alt="Peng-YM" title="Peng-YM" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">高级订阅管理工具，使用前请在本插件的详情页面为[PROXY]项分配代理策略。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Swiftgram.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Swiftgram.png" class="card-icon" alt="Swiftgram icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Swiftgram</h3>
+                    <div class="author-wrapper"><a href="https://github.com/sooyaaabo" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/sooyaaabo.png" class="author-avatar" alt="sooyaaabo" title="sooyaaabo" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">Telegram外部链接跳转至Swiftgram</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Taobao.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Taobao.png" class="card-icon" alt="淘宝 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">淘宝</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/kelv1n1n" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/kelv1n1n.png" class="author-avatar" alt="kelv1n1n" title="kelv1n1n" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤淘宝广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-26 12:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Telegram.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Telegram-01.png" class="card-icon" alt="Telegram icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Telegram</h3>
+                    <div class="author-wrapper"><a href="https://github.com/sooyaaabo" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/sooyaaabo.png" class="author-avatar" alt="sooyaaabo" title="sooyaaabo" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">Telegram外部链接跳转，可选目标客户端为Telegram、Swiftgram、Turrit、iMe、Nicegram、Lingogram，默认选择Telegram跳转至官方客户端。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/TencentVideo.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/TencentVideo.png" class="card-icon" alt="腾讯视频 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">腾讯视频</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">不负好时光 [不负好广告]</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-02 20:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/TestFlight.lpx">
+                <div class="card-top">
+                  <img src="https://loon.103516.xyz/Icon/App-Icon/TestFlight-03.png" class="card-icon" alt="TestFlight icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">TestFlight</h3>
+                    <div class="author-wrapper"><a href="https://github.com/NobyDa" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/NobyDa.png" class="author-avatar" alt="NobyDa" title="NobyDa" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">解除TestFlight区域限制，以解决安装或更新TestFlight内App时, 提示"APP不可用"问题。\niOS/iPadOS/tvOS 26已禁止TestFlight MitM，请禁用此插件。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/TestFlightMonitor.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/TestFlight-04.png" class="card-icon" alt="TestFlight Monitor icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">TestFlight Monitor</h3>
+                    <div class="author-wrapper"><a href="https://github.com/fmz200" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/fmz200.png" class="author-avatar" alt="fmz200" title="fmz200" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/DecoAri" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/DecoAri.png" class="author-avatar" alt="DecoAri" title="DecoAri" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/xream" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/xream.png" class="author-avatar" alt="xream" title="xream" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">1.自动监控TestFlight，手动填写应用APP_ID，一旦有空余名额会自动通知，点击通知即可跳转加入；\n2.自动加入TestFlight，需先获取账号令牌[添加主机名testflight.apple.com]，一旦有空余名额会自动加入。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span><span class="tag-item">定时任务</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/ThunderCloudDisk.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/ThunderCloudDisk.png" class="card-icon" alt="迅雷 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">迅雷</h3>
+                    <div class="author-wrapper"><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/Marol62926" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Marol62926.png" class="author-avatar" alt="Marol62926" title="Marol62926" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤迅雷广告，解锁部分会员功能。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span><span class="tag-item">解锁会员</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Turrit.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Turrit.png" class="card-icon" alt="Turrit icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Turrit</h3>
+                    <div class="author-wrapper"><a href="https://github.com/sooyaaabo" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/sooyaaabo.png" class="author-avatar" alt="sooyaaabo" title="sooyaaabo" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">Telegram外部链接跳转至Turrit</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/VVebo.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/VVebo.png" class="card-icon" alt="VVebo icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">VVebo</h3>
+                    <div class="author-wrapper"><a href="https://github.com/suiyuran" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/suiyuran.png" class="author-avatar" alt="suiyuran" title="suiyuran" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/androidcn" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/androidcn.png" class="author-avatar" alt="androidcn" title="androidcn" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">修复用户主页时间线问题，需禁用[微博]插件和[微博轻享版]插件，以避免本插件不生效。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/WeChat.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/WeChat.png" class="card-icon" alt="微信 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">微信</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/zZPiglet" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/zZPiglet.png" class="author-avatar" alt="zZPiglet" title="zZPiglet" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/blackmatrix7" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/blackmatrix7.png" class="author-avatar" alt="blackmatrix7" title="blackmatrix7" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/zirawell" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/zirawell.png" class="author-avatar" alt="zirawell" title="zirawell" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">微信公众号、小程序去广告以及微信外部链接解锁</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-05-02 23:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/WebPage.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Alook.png" class="card-icon" alt="WebPage icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">WebPage</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ddgksf2013" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ddgksf2013.png" class="author-avatar" alt="ddgksf2013" title="ddgksf2013" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ZenmoFeiShi" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ZenmoFeiShi.png" class="author-avatar" alt="ZenmoFeiShi" title="ZenmoFeiShi" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/kokoryh" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/kokoryh.png" class="author-avatar" alt="kokoryh" title="kokoryh" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤部分网页广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-15 00:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Weibo.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Weibo.png" class="card-icon" alt="微博 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">微博</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/fmz200" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/fmz200.png" class="author-avatar" alt="fmz200" title="fmz200" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/zmqcherish" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/zmqcherish.png" class="author-avatar" alt="zmqcherish" title="zmqcherish" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">微博全面净化</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-05-13 19:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Weibo_intl.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Weibo_intl.png" class="card-icon" alt="微博轻享版 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">微博轻享版</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Keywos" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Keywos.png" class="author-avatar" alt="Keywos" title="Keywos" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/kokoryh" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/kokoryh.png" class="author-avatar" alt="kokoryh" title="kokoryh" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤微博轻享版广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-05-15 23:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/XPTV.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/XPTV.png" class="card-icon" alt="XPTV icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">XPTV</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Yswag" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Yswag.png" class="author-avatar" alt="Yswag" title="Yswag" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">伪CMS源，安装此插件后在XPTV内添加订阅地址：https://ykusu.ykusu/getJSON/cmsbeta.json</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/X_Web.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/X-01.png" class="card-icon" alt="X（Twitter） icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">X（Twitter）</h3>
+                    <div class="author-wrapper"><a href="https://github.com/fmz200" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/fmz200.png" class="author-avatar" alt="fmz200" title="fmz200" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤网页版X（Twitter）广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-26 12:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Xiaocan.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Xiaocan.png" class="card-icon" alt="小蚕惠生活 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">小蚕惠生活</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Sliverkiss" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Sliverkiss.png" class="author-avatar" alt="Sliverkiss" title="Sliverkiss" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤小蚕惠生活广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/Xueqiu.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Xueqiu.png" class="card-icon" alt="雪球 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">雪球</h3>
+                    <div class="author-wrapper"><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ddgksf2013" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ddgksf2013.png" class="author-avatar" alt="ddgksf2013" title="ddgksf2013" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤雪球广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/YouTube.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/YouTube.png" class="card-icon" alt="Youtube (Music) icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">Youtube (Music)</h3>
+                    <div class="author-wrapper"><a href="https://github.com/Maasea" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Maasea.png" class="author-avatar" alt="Maasea" title="Maasea" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/VirgilClyne" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/VirgilClyne.png" class="author-avatar" alt="VirgilClyne" title="VirgilClyne" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/Choler" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Choler.png" class="author-avatar" alt="Choler" title="Choler" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/DivineEngine" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/DivineEngine.png" class="author-avatar" alt="DivineEngine" title="DivineEngine" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/app2smile" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/app2smile.png" class="author-avatar" alt="app2smile" title="app2smile" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤Youtube (Music)广告，增加画中画、字幕翻译、歌词翻译功能，支持后台播放。需要启用QUIC回退保护。不支持tvOS设备。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/YoukuVideo.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/YoukuVideo.png" class="card-icon" alt="优酷视频 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">优酷视频</h3>
+                    <div class="author-wrapper"><a href="https://github.com/RuCu6" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/RuCu6.png" class="author-avatar" alt="RuCu6" title="RuCu6" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">为好内容 全力以赴 [为好广告 全力以赴]</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/iRingo_WeatherKit.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/AppleWeather.png" class="card-icon" alt="iRingo:WeatherKit icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">iRingo:WeatherKit</h3>
+                    <div class="author-wrapper"><a href="https://github.com/VirgilClyne" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/VirgilClyne.png" class="author-avatar" alt="VirgilClyne" title="VirgilClyne" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/WordlessEcho" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/WordlessEcho.png" class="author-avatar" alt="WordlessEcho" title="WordlessEcho" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/001ProMax" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/001ProMax.png" class="author-avatar" alt="001ProMax" title="001ProMax" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">1.解锁全部天气功能；2.替换空气质量数据；3.添加下一小时降水数据；4.添加天气数据。\n仅支持iOS 18 &amp; macOS 15 &amp; watchOS 11及以上版本。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">功能增强</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/iTunes.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/iTunes.png" class="card-icon" alt="iTunes icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">iTunes</h3>
+                    <div class="author-wrapper"><a href="https://github.com/chxm1023" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/chxm1023.png" class="author-avatar" alt="chxm1023" title="chxm1023" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/ddgksf2013" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ddgksf2013.png" class="author-avatar" alt="ddgksf2013" title="ddgksf2013" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/Guding88" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/Guding88.png" class="author-avatar" alt="Guding88" title="Guding88" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">iTunes系列解锁合集，在设置中选择需要使用的原作者脚本以使用此插件。</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">解锁会员</span></div>
+                  <p class="card-update-time">2026-04-01 09:00</p>
+                </div>
+              </a><a class="card" href="loon://import?plugin=https://loon.103516.xyz/Plugin/smzdm.lpx">
+                <div class="card-top">
+                  <img src="https://raw.githubusercontent.com/sooyaaabo/IconLibrary/main/App/Zhidemai.png" class="card-icon" alt="什么值得买 icon" loading="lazy">
+                  <div class="card-header-info">
+                    <h3 class="card-title">什么值得买</h3>
+                    <div class="author-wrapper"><a href="https://github.com/ZenmoFeiShi" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/ZenmoFeiShi.png" class="author-avatar" alt="ZenmoFeiShi" title="ZenmoFeiShi" loading="lazy" onerror="this.style.display='none'">
+                    </a><a href="https://github.com/luestr/ProxyResource/blob/main/README.md" target="_blank" rel="noopener noreferrer">
+                      <img src="https://github.com/luestr.png" class="author-avatar" alt="可莉🅥" title="可莉🅥" loading="lazy" onerror="this.style.display='none'">
+                    </a></div>
+                  </div>
+                </div>
+                <p class="card-desc">过滤什么值得买广告</p>
+                <div class="card-footer">
+                  <div class="card-tags"><span class="tag-item">去广告</span></div>
+                  <p class="card-update-time">2026-05-16 10:00</p>
+                </div>
+              </a></div>
+
+        <footer>
+            <span>更新时间</span>：<span id="updateTime">2026-05-25 22:42</span>
+            <br>Copyright © <span id="copyright-year">2025-2026</span> sooyaaabo. All rights reserved.
+        </footer>
+    </div>
+
+    <script>
+        // 手动处理滚动恢复，避免页面刷新后位置跳动
+        if ('scrollRestoration' in history) {
+          history.scrollRestoration = 'manual';
+        }
+    
+        (async () => {
+          // Service Worker 注册与 PWA 安装事件处理
+          if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+              navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW fail:', err));
+            });
+          }
+    
+          let deferredPrompt;
+          const installBtn = document.getElementById('install-pwa');
+    
+          window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'flex';
+          });
+    
+          installBtn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`Install: ${outcome}`);
+            deferredPrompt = null;
+            installBtn.style.display = 'none';
+          });
+    
+          // 静态文本与配置对象
+          const TEXT = {
+            repoTitle: 'Loon 插件仓库',
+            repoDesc: '点击插件卡片即可跳转安装插件',
+            bannerWarning: '禁止在中华人民共和国境内平台公开传播本仓库内容以及将其用于任何商业或非法用途！如有发现，请向平台举报！',
+            bannerDisclaimer: '本网站由个人制作与维护，与Loon官方无关。',
+            bannerUpdateNotice: '若插件提示"Loon的版本过旧，插件功能受限"，请自行前往 App Store 进行软件更新。',
+            bannerRefreshNotice: '若插件提示"插件中部分资源不可用，插件功能受限"，请点击插件进入详情页后手动刷新。',
+            searchPlaceholder: '搜索插件名称或标签…',
+            catAll: '全部',
+            catAdblock: '去广告',
+            catEnhance: '功能增强',
+            catUnlock: '解锁会员',
+            catCron: '定时任务',
+            sectionTitle: (cat, count) => `${cat} · ${count} 个插件`,
+            loadingPlugins: '正在从 GitHub 加载插件列表，请稍候…',
+            loadFailed: (msg) => `加载插件失败：${msg}`,
+            noPluginsFound: '在仓库中没有找到任何 .lpx 文件。',
+            noMatch: '暂无匹配的插件',
+            updateTimeLabel: '更新时间',
+            cardUpdateTime: '更新于 ',
+            cardNoDesc: '暂无描述',
+            getFailed: '获取失败',
+            loading: '正在加载…'
+          };
+    
+          // 获取 DOM 元素引用
+          const menuToggle = document.getElementById('menu-toggle');
+          const secondaryMenu = document.getElementById('secondary-menu');
+          const listEl = document.getElementById('list');
+          const searchEl = document.getElementById('search');
+          const tabsEl = document.querySelector('.tabs');
+          const sectionTitleEl = document.getElementById('sectionTitle');
+          const updateTimeEl = document.getElementById('updateTime');
+    
+          // 初始化滚动公告栏内容
+          const bannerContainer = document.getElementById('announcementBanner');
+          const bannerMessages = [
+            TEXT.bannerWarning,
+            TEXT.bannerDisclaimer,
+            TEXT.bannerUpdateNotice,
+            TEXT.bannerRefreshNotice
+          ];
+          bannerMessages.forEach((message, index) => {
+            const p = document.createElement('p');
+            p.className = 'banner-item';
+            if (index === 0) p.classList.add('active');
+            p.textContent = message;
+            bannerContainer.appendChild(p);
+          });
+    
+          // 页面文本初始化
+          document.querySelector('h1').textContent = TEXT.repoTitle;
+          document.querySelector('header p').textContent = TEXT.repoDesc;
+          searchEl.placeholder = TEXT.searchPlaceholder;
+
+          // Copyright 年份
+          (() => {
+            const startYear = 2025;
+            const currentYear = new Date().getFullYear();
+            document.getElementById('copyright-year').textContent =
+              startYear === currentYear ? startYear : `${startYear}-${currentYear}`;
+          })();
+            
+          document.querySelectorAll('.tab').forEach(btn => {
+            const cat = btn.dataset.cat;
+            const key = cat === 'all' ? 'All' : cat === '去广告' ? 'Adblock' : cat === '功能增强' ? 'Enhance' : cat === '解锁会员' ? 'Unlock' : 'Cron';
+            btn.textContent = TEXT[`cat${key}`];
+          });
+    
+          document.querySelector('footer span').textContent = TEXT.updateTimeLabel;
+          document.querySelector('#list .empty').textContent = TEXT.loadingPlugins;
+          sectionTitleEl.textContent = TEXT.loading;
+    
+          // 从 plugins.json 获取插件列表
+          let plugins = [];
+          const GITHUB_REPO = 'sooyaaabo/Loon';
+          const PLUGIN_DIR_PATH = 'Plugin';
+          
+          // 使用相对路径加载同目录下的 JSON 文件
+          const JSON_URL = './plugins.json';
+    
+          try {
+            // 添加时间戳防止缓存
+            const response = await fetch(`${JSON_URL}?t=${new Date().getTime()}`);
+            if (!response.ok) throw new Error('无法加载插件索引文件');
+    
+            const result = await response.json();
+            plugins = result.plugins || []; // 获取插件数组
+            const globalUpdateTime = result.last_updated || '--'; // 获取全局更新时间
+
+            updateTimeEl.textContent = globalUpdateTime;
+
+          } catch (error) {
+            listEl.innerHTML = `<div class="empty">${TEXT.loadFailed(error.message)}</div>`;
+            sectionTitleEl.textContent = 'Error';
+            return;
+          }
+    
+          // 插件列表过滤与渲染逻辑
+          function render(filterCat = 'all', kw = '') {
+            const lowerKw = kw.toLowerCase();
+            const filtered = plugins.filter(p => {
+              const hitCat = filterCat === 'all' || p.tags.includes(filterCat);
+              const hitKw = !lowerKw ||
+                p.name.toLowerCase().includes(lowerKw) ||
+                p.tags.some(tag => tag.toLowerCase().includes(lowerKw)) ||
+                p.authors.some(a => a.name.toLowerCase().includes(lowerKw));
+              return hitCat && hitKw;
+            });
+    
+            const catText = tabsEl.querySelector(`[data-cat="${filterCat}"]`).textContent;
+            sectionTitleEl.textContent = TEXT.sectionTitle(catText, filtered.length);
+            listEl.innerHTML = '';
+    
+            if (!filtered.length) {
+              listEl.innerHTML = `<div class="empty">${TEXT.noMatch}</div>`;
+              return;
+            }
+    
+            filtered.forEach(p => {
+              const card = document.createElement('a');
+              card.className = 'card';
+              card.href = `loon://import?plugin=${p.page_url || p.url}`;
+    
+              const tagsHtml = p.tags.map(tag => `<span class="tag-item">${tag}</span>`).join('');
+              const descText = (p.desc === '暂无描述' || p.desc === 'No description available') ? TEXT.cardNoDesc : p.desc;
+    
+              let authorsHtml = '';
+              if (p.authors && p.authors.length > 0) {
+                const imgs = p.authors.map(a =>
+                  `<a href="${a.url}" target="_blank" rel="noopener noreferrer">
+                      <img src="${a.avatar}" class="author-avatar" alt="${a.name}" title="${a.name}"
+                      loading="lazy" onerror="this.style.display='none'">
+                    </a>`
+                ).join('');
+    
+                authorsHtml = `<div class="author-wrapper">${imgs}</div>`;
+              }
+    
+              card.innerHTML = `
+                <div class="card-top">
+                  ${p.icon ? `<img src="${p.icon}" class="card-icon" alt="${p.name} icon" loading="lazy">` : ''}
+                  <div class="card-header-info">
+                    <h3 class="card-title">${p.name}</h3>
+                    ${authorsHtml}
+                  </div>
+                </div>
+                <p class="card-desc">${descText}</p>
+                <div class="card-footer">
+                  <div class="card-tags">${tagsHtml}</div>
+                  <p class="card-update-time">${p.date}</p>
+                </div>
+              `;
+              listEl.appendChild(card);
+            });
+          }
+    
+          // 交互事件监听（菜单、点击、筛选、搜索）
+          menuToggle.addEventListener('click', e => {
+            e.stopPropagation();
+            secondaryMenu.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+          });
+    
+          secondaryMenu.addEventListener('click', e => {
+            if (e.target.closest('#install-pwa')) return;
+            if (e.target.closest('.menu-item')) {
+              secondaryMenu.classList.remove('active');
+              menuToggle.classList.remove('active');
+            }
+          });
+    
+          document.addEventListener('click', e => {
+            if (!secondaryMenu.contains(e.target) && !menuToggle.contains(e.target) && secondaryMenu.classList.contains('active')) {
+              secondaryMenu.classList.remove('active');
+              menuToggle.classList.remove('active');
+            }
+          });
+    
+          tabsEl.addEventListener('click', e => {
+            if (e.target.matches('.tab')) {
+              tabsEl.querySelector('.active').classList.remove('active');
+              e.target.classList.add('active');
+              render(e.target.dataset.cat, searchEl.value);
+            }
+          });
+    
+          searchEl.addEventListener('input', () => {
+            render(tabsEl.querySelector('.tab.active').dataset.cat, searchEl.value);
+          });
+    
+          // 公告栏自动滚动动画逻辑
+          (() => {
+            const bannerEl = document.getElementById('announcementBanner');
+            const bannerItems = bannerEl.querySelectorAll('.banner-item');
+            const totalBanners = bannerItems.length;
+            if (totalBanners <= 1) return;
+    
+            let currentIndex = 0;
+            let bannerLoopAbort = null;
+    
+            const handleBannerAnimation = async (item) => {
+              item.style.transition = 'none';
+              item.style.transform = 'translateX(0)';
+              await new Promise(r => setTimeout(r, 50));
+              const containerWidth = item.clientWidth;
+              const textWidth = item.scrollWidth;
+              if (textWidth > containerWidth) {
+                await new Promise(r => setTimeout(r, 1000));
+                const offset = textWidth - containerWidth;
+                const speed = 60;
+                const dur = offset / speed;
+                item.style.transition = `transform ${dur}s linear`;
+                item.style.transform = `translateX(-${offset}px)`;
+                await new Promise(r => {
+                  item.addEventListener('transitionend', r, { once: true });
+                });
+                await new Promise(r => setTimeout(r, 1000));
+              } else {
+                await new Promise(r => setTimeout(r, 2500));
+              }
+              item.style.transition = 'none';
+              item.style.transform = 'translateX(0)';
+            };
+    
+            const startBannerLoop = async () => {
+              bannerLoopAbort?.abort();
+              bannerLoopAbort = new AbortController();
+              const signal = bannerLoopAbort.signal;
+              bannerItems.forEach((item, index) => {
+                if (index !== currentIndex) item.classList.remove('active');
+              });
+              bannerItems[currentIndex].classList.add('active');
+              while (!signal.aborted) {
+                const item = bannerItems[currentIndex];
+                await handleBannerAnimation(item);
+                if (signal.aborted) break;
+                item.classList.remove('active');
+                currentIndex = (currentIndex + 1) % totalBanners;
+                bannerItems[currentIndex].classList.add('active');
+                await new Promise(r => setTimeout(r, 600));
+              }
+            };
+    
+            bannerEl.addEventListener('click', () => {
+              if (!bannerLoopAbort) return;
+              bannerLoopAbort.abort();
+              currentIndex = (currentIndex + 1) % totalBanners;
+              startBannerLoop();
+            });
+    
+            startBannerLoop();
+          })();
+    
+          // 启动首次渲染
+          if (plugins.length > 0) render('all', '');
+        })();
+    </script>
+
+
+</body></html>
