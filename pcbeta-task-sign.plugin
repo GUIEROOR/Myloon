@@ -1,0 +1,11 @@
+#!name=PCBeta Daily Task
+#!desc=Capture PCBeta Cookie and run daily task sign-in with Loon.
+#!author=Codex
+#!homepage=https://pcbeta.com/
+
+[Script]
+http-request ^https?:\/\/(i|bbs)\.pcbeta\.com\/ script-path=https://raw.githubusercontent.com/GUIEROOR/Myloon/main/pcbeta-task-sign.user.js?v=20260608, requires-body=false, timeout=20, tag=PCBeta Cookie
+cron "0 9 * * *" script-path=https://raw.githubusercontent.com/GUIEROOR/Myloon/main/pcbeta-task-sign.user.js?v=20260608, timeout=60, tag=PCBeta Daily Task
+
+[MITM]
+hostname = i.pcbeta.com, bbs.pcbeta.com
