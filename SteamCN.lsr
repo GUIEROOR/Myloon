@@ -3,7 +3,8 @@
 DOMAIN,steamcdn-a.akamaihd.net,DIRECT
 DOMAIN-SUFFIX,cm.steampowered.com,DIRECT
 DOMAIN-SUFFIX,steamserver.net,DIRECT
-
+DOMAIN,cdn.akamai.steamstatic.com,DIRECT
+DOMAIN,shared.akamai.steamstatic.com,DIRECT
 IP-CIDR,45.121.184.0/24,DIRECT
 IP-CIDR,103.10.124.0/23,DIRECT
 IP-CIDR,103.28.54.0/24,DIRECT
