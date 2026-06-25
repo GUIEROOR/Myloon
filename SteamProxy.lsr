@@ -1,0 +1,19 @@
+# Name = SteamProxy
+# Author = Custom
+# Update = 2026-06-25
+# Type = Loon Rule
+# Policy = PROXY
+# Total = 12
+
+DOMAIN,api.steampowered.com
+DOMAIN,shared.cloudflare.steamstatic.com
+DOMAIN,community.cloudflare.steamstatic.com
+DOMAIN,community.akamai.steamstatic.com
+DOMAIN-SUFFIX,steam-chat.com
+DOMAIN-SUFFIX,steamcommunity.com
+DOMAIN-SUFFIX,steamgames.com
+DOMAIN-SUFFIX,steamusercontent.com
+DOMAIN-SUFFIX,steamuserimages-a.akamaihd.net
+DOMAIN-SUFFIX,steamcommunity-a.akamaihd.net
+DOMAIN-SUFFIX,steamstore-a.akamaihd.net
+DOMAIN-SUFFIX,steamstatic.com
