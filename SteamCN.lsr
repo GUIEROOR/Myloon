@@ -3,8 +3,10 @@
 # Update = 2026-06-25
 # Type = Loon Rule
 # Policy = DIRECT
-# Total = 28
+# Total = 29
 
+DOMAIN-SUFFIX,akamai.steamstatic.com,DIRECT
+DOMAIN,shared.akamai.steamstatic.com,DIRECT
 DOMAIN,store.steampowered.com
 DOMAIN,cm.steampowered.com
 DOMAIN,cdn.akamai.steamstatic.com
