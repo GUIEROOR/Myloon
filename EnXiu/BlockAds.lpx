@@ -44,7 +44,7 @@ maimai_script = switch, true, false, tag = 脉脉
 mafengwo_script = switch, true, false, tag = 马蜂窝
 meiyou_script = switch, true, false, tag = 美柚
 miguvideo_script = switch, true, false, tag = 咪咕视频
-pupu_script = switch, true, false, tag = 朴朴超市
+pupu_script = switch, false, false, tag = 朴朴超市
 quda_script = switch, true, false, tag = 去哒
 reddit_script = switch, true, false, tag = Reddit
 qmai_script = switch, true, false, tag = 企迈
@@ -2376,8 +2376,8 @@ https?:\/\/api\.taptapdada\.com\/startup\-logo\/v1\/combo\? reject-dict
 
 [Script]
 # 朴朴超市：仅修改成功响应中的广告数组，保留首页 API 正常返回
-http-response ^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/advertisement\/v\d+\? script-path = https://raw.githubusercontent.com/GUIEROOR/Myloon/main/EnXiu/PupuSafeAds.js, requires-body = true, tag = [广告拦截合集]朴朴广告安全过滤, enable={pupu_script}
-http-response ^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/banner\/v\d+\? script-path = https://raw.githubusercontent.com/GUIEROOR/Myloon/main/EnXiu/PupuSafeAds.js, requires-body = true, tag = [广告拦截合集]朴朴开屏安全过滤, enable={pupu_script}
+# TEMP DISABLED - home compatibility diagnostic: http-response ^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/advertisement\/v\d+\? script-path = https://raw.githubusercontent.com/GUIEROOR/Myloon/main/EnXiu/PupuSafeAds.js, requires-body = true, tag = [广告拦截合集]朴朴广告安全过滤, enable={pupu_script}
+# TEMP DISABLED - home compatibility diagnostic: http-response ^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/banner\/v\d+\? script-path = https://raw.githubusercontent.com/GUIEROOR/Myloon/main/EnXiu/PupuSafeAds.js, requires-body = true, tag = [广告拦截合集]朴朴开屏安全过滤, enable={pupu_script}
 
 # >>>>>>>>>>>>>>> ✅ 5 ✅ <<<<<<<<<<<<<<< #
 # 555电影 - vip7.fzwdyy.cn, *.qyfxgd.cn, *.weilai555.com, *.ecoliving168.com
