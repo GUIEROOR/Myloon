@@ -21,5 +21,6 @@
       }
     });
   });
+  console.log("[PupuSplashOnly] advertisement/v1 matched; region50_removed=" + changed);
   $done(changed ? {body: JSON.stringify(json)} : {});
 })();
