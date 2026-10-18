@@ -755,7 +755,6 @@ DOMAIN-SUFFIX, adlog-ztjy.szy.cn, REJECT
 
 # QuChenShi
 ^https?:\/\/mystore-gw\.watsonsvip\.com\.cn\/gfu\/popup\/advert\/launch reject-200
-^http:\/\/[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+){1,4}(:\d+)?\/\w+\/resolv reject-200
 
 # QiHangJiaoYu
 ^https?:\/\/mobile\.iqihang\.com\/api\/ark\/web\/v\d\/advert reject-200
@@ -1263,6 +1262,9 @@ DOMAIN-SUFFIX, adlog-ztjy.szy.cn, REJECT
 ^https?:\/\/misc\.eol\.cn\/js\/target\/move\/zskyApp\/Appqdkp\/.*json reject
 
 [Script]
+# 朴朴超市 - 仅过滤开屏位置 50；首页红包、活动、商品和导航不处理
+http-response ^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/advertisement\/v1\? script-path = https://raw.githubusercontent.com/GUIEROOR/Myloon/main/EnXiu/PupuSafeAds.js, requires-body = true, tag = [墨鱼去开屏2.0]朴朴仅去开屏
+
 # ======= 0~9 ======= #
 # 555 DianYing
 http-response ^https?:\/\/[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+){1,4}(:\d+)?\/api\/v\d\/movie\/index_recommend script-path = https://raw.githubusercontent.com/ddgksf2013/Scripts/master/555Ad.js, requires-body = true, tag = [墨鱼去开屏2.0]555 DianYing
