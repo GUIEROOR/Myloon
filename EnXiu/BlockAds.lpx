@@ -1313,9 +1313,6 @@ https?:\/\/awg\.enmonster\.com\/apa\/(advert\/demand\/home\/poster|index\/advert
 ^https?:\/\/image\.spdbccc\.com\.cn\/group\d\/M00\/[A-Z0-9]{2}\/[A-Z0-9]{2}\/.+(4038|0571|M511|V-008|g549|b0628|fg817|5w501|Jo341|Z4583|oo845|i4905|MY245|YU472|Y401|w428|s000) reject-dict
 
 # 朴朴超市 - j1.pupuapi.com, 54.222.159.138
-^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/banner\/v7\?position_types=(?!2)(.*)&store_id reject
-^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/banner\/v7\?position reject
-^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/advertisement\/v1\? reject-dict
 ^https?:\/\/54\.222\.159\.138:8053\/^httpdns\/resolve\? reject-dict
 
 # 平安好车主 - iobs.pingan.com.cn, hcz-member.pingan.com.cn
@@ -2378,6 +2375,10 @@ https?:\/\/api\.taptapdada\.com\/startup\-logo\/v1\/combo\? reject-dict
 ^https:\/\/ecssmobile\.e-chinalife\.com:8082\/ecss\/web\/appupdate\/customization\/getFlashScreenInfo reject-dict
 
 [Script]
+# 朴朴超市：仅修改成功响应中的广告数组，保留首页 API 正常返回
+http-response ^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/advertisement\/v\d+\? script-path = https://raw.githubusercontent.com/GUIEROOR/Myloon/main/EnXiu/PupuSafeAds.js, requires-body = true, tag = [广告拦截合集]朴朴广告安全过滤, enable={pupu_script}
+http-response ^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/banner\/v\d+\? script-path = https://raw.githubusercontent.com/GUIEROOR/Myloon/main/EnXiu/PupuSafeAds.js, requires-body = true, tag = [广告拦截合集]朴朴开屏安全过滤, enable={pupu_script}
+
 # >>>>>>>>>>>>>>> ✅ 5 ✅ <<<<<<<<<<<<<<< #
 # 555电影 - vip7.fzwdyy.cn, *.qyfxgd.cn, *.weilai555.com, *.ecoliving168.com
 http-response ^https?:\/\/[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+){1,3}(:\d+)?\/api\/v\d\/movie\/index_recommend script-path = https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/555Ad.js, requires-body = true, tag = [广告拦截合集]555电影, enable={555dy_script}
@@ -2492,7 +2493,6 @@ http-response ^https?:\/\/display-sc\.miguvideo\.com\/display\/v3\/static\/PERSO
 
 # >>>>>>>>>>>>>>> ✅ P ✅ <<<<<<<<<<<<<<< #
 # 朴朴超市 - j1.pupuapi.com
-http-response ^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/banner\/v7\?position_types=2(%[A-Z0-9]+)+&store_id script-path = https://raw.githubusercontent.com/fmz200/wool_scripts/main/Scripts/PupuSplashAds.js, requires-body = true, tag = [广告拦截合集]朴朴超市, enable={pupu_script}
 
 # >>>>>>>>>>>>>>> ✅ Q ✅ <<<<<<<<<<<<<<< #
 # 起点读书 - qidian.qpic.cn, mage.if.qidian.com, magev6.if.qidian.com
