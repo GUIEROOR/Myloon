@@ -1,32 +1,25 @@
-/* 朴朴超市保守去广告：只清理明确的广告列表，保留响应结构。 */
+/* Pupu splash ad: precise region 50 filtering, preserve response schema and other home feeds.
+ * HAR confirmed /client/marketing/advertisement/v1 data[].region_code=50,
+ * positions[].code=50, advertisements["50"] array.
+ */
 (function () {
   if (typeof $response === "undefined" || !$response.body) return $done({});
   var url = $request.url || "";
-  var obj;
-  try { obj = JSON.parse($response.body); } catch (_) { return $done({}); }
-  if (!obj || typeof obj !== "object" || Array.isArray(obj)) return $done({});
-  // 不修补/伪造错误响应，避免掩盖真正的接口故障
-  if (typeof obj.errcode === "number" && obj.errcode !== 0) return $done({});
+  if (!/^https?:\/\/j1\.pupuapi\.com\/client\/marketing\/advertisement\/v1(?:\?|$)/i.test(url)) return $done({});
+  var json;
+  try { json = JSON.parse($response.body); } catch (e) { return $done({}); }
+  if (!json || json.errcode !== 0 || !Array.isArray(json.data)) return $done({});
   var changed = false;
-  function clear(container, key) {
-    if (container && Object.prototype.hasOwnProperty.call(container, key) && Array.isArray(container[key]) && container[key].length) {
-      container[key] = [];
-      changed = true;
-    }
-  }
-  if (/\/client\/marketing\/advertisement\/v\d+/.test(url)) {
-    // 不将整个接口替换为 {}，只清空识别到的广告列表
-    if (Array.isArray(obj.data)) { clear(obj, "data"); }
-    else if (obj.data && typeof obj.data === "object") {
-      ["advertisements", "advertisement_list", "ad_list", "ads", "list", "items"].forEach(function(k) { clear(obj.data, k); });
-    }
-  } else if (/\/client\/marketing\/banner\/v\d+/.test(url)) {
-    // 仅过滤明确的开屏位 position_types=2，避免误伤首页的其他业务轮播
-    if (!/[?&]position_types=(?:2|2%2C|2,)(?:&|$)/i.test(url)) return $done({});
-    if (Array.isArray(obj.data)) { clear(obj, "data"); }
-    else if (obj.data && typeof obj.data === "object") {
-      ["banners", "banner_list", "list", "items"].forEach(function(k) { clear(obj.data, k); });
-    }
-  }
-  return $done(changed ? {body: JSON.stringify(obj)} : {});
+  json.data.forEach(function(region) {
+    if (!region || Number(region.region_code) !== 50 || !Array.isArray(region.positions)) return;
+    region.positions.forEach(function(position) {
+      if (!position || Number(position.code) !== 50 || !position.advertisements ||
+          typeof position.advertisements !== "object" || Array.isArray(position.advertisements)) return;
+      if (Array.isArray(position.advertisements["50"]) && position.advertisements["50"].length > 0) {
+        position.advertisements["50"] = [];
+        changed = true;
+      }
+    });
+  });
+  $done(changed ? {body: JSON.stringify(json)} : {});
 })();
